@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="theme-color" content="#0C1021">
+
+  <title>{{ 'gift_cards.issued.title' | t: value: gift_card.balance | money_without_trailing_zeros: gift_card.currency }}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+  {{ 'theme.min.css' | asset_url | stylesheet_tag }}
+
+  <style>
+    .gift-card-page {
+      background: linear-gradient(135deg, #0C1021 0%, #171C2A 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .gift-card-container {
+      max-width: 600px;
+      width: 100%;
+      background: #171C2A;
+      border: 2px solid #2D3748;
+      border-radius: 1.5rem;
+      padding: 3rem;
+      box-shadow: 0 0 30px rgba(127, 90, 240, 0.3);
+    }
+
+    .gift-card-code {
+      background: #0C1021;
+      border: 2px dashed #7F5AF0;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 1.5rem;
+      letter-spacing: 0.1em;
+      text-align: center;
+      color: #E5E7EB;
+      margin: 2rem 0;
+    }
+
+    .gift-card-qr {
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .gift-card-amount {
+      font-size: 3rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, #7F5AF0 0%, #2CB67D 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+      margin: 1rem 0;
+    }
+
+    .print-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #7F5AF0 0%, #2CB67D 100%);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 1rem;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .print-btn:hover {
+      box-shadow: 0 0 30px rgba(127, 90, 240, 0.5);
+      transform: scale(1.05);
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+      .gift-card-page { background: white; }
+      .gift-card-container { border-color: #000; box-shadow: none; }
+    }
+  </style>
+
+  {{ content_for_header }}
+</head>
+
+<body class="gift-card-page">
+  <div class="gift-card-container">
+    
+    <!-- Header -->
+    <header class="text-center mb-8">
+      {%- if settings.logo != blank -%}
+        <img
+          src="{{ settings.logo | image_url: width: 200 }}"
+          alt="{{ shop.name }}"
+          width="200"
+          height="auto"
+          class="mx-auto mb-6"
+        >
+      {%- else -%}
+        <h1 class="text-3xl font-bold mb-2" style="background: linear-gradient(135deg, #7F5AF0 0%, #2CB67D 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          {{ shop.name }}
+        </h1>
+      {%- endif -%}
+      
+      <p class="text-lg text-muted">{{ 'gift_cards.issued.subtext' | t }}</p>
+    </header>
+
+    <!-- Gift Card Value -->
+    {%- if gift_card.balance != gift_card.initial_value -%}
+      <div class="text-center mb-4">
+        <p class="text-muted text-sm mb-2">{{ 'gift_cards.issued.remaining_html' | t }}</p>
+        <p class="gift-card-amount">{{ gift_card.balance | money }}</p>
+      </div>
+    {%- else -%}
+      <p class="gift-card-amount">{{ gift_card.initial_value | money }}</p>
+    {%- endif -%}
+
+    <!-- Gift Card Code -->
+    <div class="gift-card-code">
+      <p class="text-sm text-muted mb-2">{{ 'gift_cards.issued.redeem_html' | t }}</p>
+      <strong id="gift-card-code">{{ gift_card.code | format_code }}</strong>
+    </div>
+
+    <!-- QR Code -->
+    {%- if gift_card.pass_url -%}
+      <div class="gift-card-qr">
+        <img 
+          src="{{ gift_card.qr_identifier | qr_code_url }}" 
+          alt="{{ 'gift_cards.issued.qr_code_text' | t }}"
+          width="200"
+          height="200"
+          class="mx-auto"
+        >
+      </div>
+    {%- endif -%}
+
+    <!-- Instructions -->
+    <div class="text-center my-8">
+      <p class="text-muted text-sm mb-4">
+        {{ 'gift_cards.issued.redeem_instructions' | t }}
+      </p>
+      
+      {%- if gift_card.expires_on -%}
+        <p class="text-sm">
+          {{ 'gift_cards.issued.expiry_date' | t: expiry_date: gift_card.expires_on | date: format: 'month_day_year' }}
+        </p>
+      {%- endif -%}
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center no-print">
+      <button onclick="window.print()" class="print-btn">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+        </svg>
+        {{ 'gift_cards.issued.print_gift_card' | t }}
+      </button>
+
+      {%- if gift_card.pass_url -%}
+        <a href="{{ gift_card.pass_url }}" class="print-btn" style="background: #171C2A; border: 2px solid #7F5AF0;">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          {{ 'gift_cards.issued.add_to_apple_wallet' | t }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <!-- Shop Link -->
+    <div class="text-center mt-8 pt-8 border-t border-border no-print">
+      <a href="{{ shop.url }}" class="text-accent hover:text-accent-light transition-colors duration-300">
+        {{ 'gift_cards.issued.shop_link' | t }}
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Copy code to clipboard functionality
+    const codeElement = document.getElementById('gift-card-code');
+    if (codeElement) {
+      codeElement.style.cursor = 'pointer';
+      codeElement.title = 'Click to copy';
+      
+      codeElement.addEventListener('click', function() {
+        const code = this.textContent;
+        
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(code).then(() => {
+            const originalText = this.textContent;
+            this.textContent = '✓ Copied!';
+            setTimeout(() => {
+              this.textContent = originalText;
+            }, 2000);
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html>
+
