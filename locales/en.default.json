@@ -73,6 +73,9 @@
     },
     "pricing": {
       "popular": "Most Popular"
+    },
+    "product_3d_gallery": {
+      "no_product": "Select a product with 3D models in theme settings"
     }
   },
   "products": {
@@ -84,7 +87,17 @@
       "quantity": "Quantity",
       "variants": "variants",
       "vendor": "Vendor",
-      "related_products": "You May Also Like"
+      "related_products": "You May Also Like",
+      "view_in_space": "View in Your Space",
+      "view_3d_model": "View 3D Model",
+      "view_product": "View Product",
+      "3d_available": "3D & AR Available",
+      "3d_controls": "Interactive 3D",
+      "3d_instructions": "Drag to rotate • Pinch to zoom • Tap AR button to view in your space",
+      "no_3d_model": "This product doesn't have a 3D model yet",
+      "feature_1": "Free shipping on orders over $50",
+      "feature_2": "30-day easy returns",
+      "feature_3": "Secure checkout guaranteed"
     }
   },
   "cart": {
