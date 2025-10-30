@@ -213,10 +213,15 @@
           <article class="card group">
             {%- if related_article.image -%}
               <a href="{{ related_article.url }}" class="block mb-4 overflow-hidden rounded-xl">
+                {%- liquid
+                  assign image_height = related_article.image.width | divided_by: related_article.image.aspect_ratio | round
+                -%}
                 <img
                   src="{{ related_article.image | image_url: width: 400 }}"
                   alt="{{ related_article.image.alt | escape }}"
                   loading="lazy"
+                  width="{{ related_article.image.width }}"
+                  height="{{ image_height }}"
                   class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
                 >
               </a>
@@ -242,7 +247,7 @@
 <meta itemprop="mainEntityOfPage" content="{{ article.url }}">
 <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization" style="display: none;">
   <meta itemprop="name" content="{{ shop.name }}">
-  <link itemprop="url" href="{{ shop.url }}">
+  <meta itemprop="url" content="{{ shop.url }}">
 </div>
 
 {% schema %}
