@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0A0D14">
+  
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  {%- endif -%}
+
+  <link rel="canonical" href="{{ canonical_url }}">
+  
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  <title>
+    {{ page_title }}
+    {%- if current_tags %} &ndash; {{ 'general.meta.tags' | t: tags: current_tags.first }}{% endif -%}
+    {%- if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif -%}
+    {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+  </title>
+
+  <!-- Preconnect to external domains -->
+  <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Load Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+  {{ content_for_header }}
+
+  <!-- Theme CSS -->
+  {{ 'theme.min.css' | asset_url | stylesheet_tag }}
+  
+  <!-- Theme JavaScript -->
+  <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+  
+  {%- if request.page_type contains 'customers/' -%}
+    <script src="{{ 'customer.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
+
+  <!-- Shopify required scripts -->
+  {{ content_for_header }}
+
+  <!-- Schema.org structured data -->
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "Organization",
+      "name": {{ shop.name | json }},
+      {%- if settings.logo -%}
+        "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
+      {%- endif -%}
+      "sameAs": [
+        {{ settings.social_twitter_link | json }},
+        {{ settings.social_facebook_link | json }},
+        {{ settings.social_instagram_link | json }}
+      ],
+      "url": {{ shop.url | append: page.url | json }}
+    }
+  </script>
+
+  {%- if request.page_type == 'product' -%}
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
+        "@type": "Product",
+        "name": {{ product.title | json }},
+        "description": {{ product.description | strip_html | json }},
+        "image": {{ product.featured_image | image_url: width: 1200 | prepend: "https:" | json }},
+        "url": {{ shop.url | append: product.url | json }},
+        "sku": {{ product.selected_or_first_available_variant.sku | json }},
+        "brand": {
+          "@type": "Brand",
+          "name": {{ product.vendor | json }}
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": {{ product.selected_or_first_available_variant.price | divided_by: 100.0 | json }},
+          "priceCurrency": {{ cart.currency.iso_code | json }},
+          "availability": {%- if product.available -%}"http://schema.org/InStock"{%- else -%}"http://schema.org/OutOfStock"{%- endif -%},
+          "url": {{ shop.url | append: product.url | json }}
+        }
+      }
+    </script>
+  {%- endif -%}
+</head>
+
+<body class="template-{{ request.page_type | handle }}">
+  <a href="#MainContent" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-accent focus:text-white">
+    {{ 'accessibility.skip_to_content' | t }}
+  </a>
+
+  {%- section 'announcement-bar' -%}
+  {%- section 'header' -%}
+
+  <main id="MainContent" class="min-h-screen" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {%- section 'footer' -%}
+
+  <!-- Cart Drawer -->
+  <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-bg-secondary border-l border-border transform translate-x-full transition-transform duration-300 ease-smooth z-50 overflow-y-auto">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold">{{ 'cart.general.title' | t }}</h2>
+        <button type="button" class="text-text-secondary hover:text-text-primary" aria-label="{{ 'cart.general.close_cart' | t }}" data-cart-close>
+          {%- render 'icon-close' -%}
+        </button>
+      </div>
+      
+      <div id="cart-drawer-content">
+        {%- render 'cart-drawer-items' -%}
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Drawer Overlay -->
+  <div id="cart-drawer-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="fixed top-0 left-0 h-full w-full max-w-sm bg-bg-secondary border-r border-border transform -translate-x-full transition-transform duration-300 ease-smooth z-50 overflow-y-auto">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-bold">{{ 'general.navigation.menu' | t }}</h2>
+        <button type="button" class="text-text-secondary hover:text-text-primary" aria-label="{{ 'general.navigation.close_menu' | t }}" data-menu-close>
+          {%- render 'icon-close' -%}
+        </button>
+      </div>
+      
+      <nav aria-label="{{ 'general.navigation.main' | t }}">
+        {%- render 'mobile-nav' -%}
+      </nav>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Overlay -->
+  <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <ul hidden>
+    <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>
+    <li id="a11y-new-window-message">{{ 'accessibility.link_messages.new_window' | t }}</li>
+  </ul>
+
+  <script>
+    window.shopUrl = '{{ request.origin }}';
+    window.routes = {
+      cart_add_url: '{{ routes.cart_add_url }}',
+      cart_change_url: '{{ routes.cart_change_url }}',
+      cart_update_url: '{{ routes.cart_update_url }}',
+      cart_url: '{{ routes.cart_url }}',
+      predictive_search_url: '{{ routes.predictive_search_url }}'
+    };
+
+    window.cartStrings = {
+      error: `{{ 'cart.general.cart_error' | t }}`,
+      quantityError: `{{ 'cart.general.quantity_error' | t }}`
+    };
+
+    window.variantStrings = {
+      addToCart: `{{ 'products.product.add_to_cart' | t }}`,
+      soldOut: `{{ 'products.product.sold_out' | t }}`,
+      unavailable: `{{ 'products.product.unavailable' | t }}`
+    };
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,75 @@
+<div class="container-flux py-12">
+  <div class="max-w-md mx-auto">
+    <div class="card">
+      <h1 class="text-3xl font-bold mb-6 text-center">{{ 'customer.login.title' | t }}</h1>
+
+      {%- form 'customer_login', novalidate: 'novalidate' -%}
+        {%- if form.errors -%}
+          <div class="bg-red-500 bg-opacity-10 border border-red-500 rounded-xl p-4 mb-6">
+            <p class="text-red-400 text-sm">{{ form.errors | default_errors }}</p>
+          </div>
+        {%- endif -%}
+
+        <div class="space-y-4">
+          <div>
+            <label for="CustomerEmail" class="block text-sm font-semibold mb-2">
+              {{ 'customer.login.email' | t }}
+            </label>
+            <input
+              type="email"
+              name="customer[email]"
+              id="CustomerEmail"
+              autocomplete="email"
+              class="input"
+              {%- if form.email -%}
+                value="{{ form.email }}"
+              {%- endif -%}
+              required
+            >
+          </div>
+
+          <div>
+            <label for="CustomerPassword" class="block text-sm font-semibold mb-2">
+              {{ 'customer.login.password' | t }}
+            </label>
+            <input
+              type="password"
+              name="customer[password]"
+              id="CustomerPassword"
+              autocomplete="current-password"
+              class="input"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <button type="submit" class="btn btn-primary w-full">
+            {{ 'customer.login.sign_in' | t }}
+          </button>
+        </div>
+
+        <div class="mt-4 text-center">
+          <a href="{{ routes.account_recover_url }}" class="text-sm text-accent hover:underline">
+            {{ 'customer.login.forgot_password' | t }}
+          </a>
+        </div>
+      {%- endform -%}
+
+      <div class="mt-8 pt-6 border-t border-border text-center">
+        <p class="text-text-secondary mb-4">Don't have an account?</p>
+        <a href="{{ routes.account_register_url }}" class="btn btn-outline w-full">
+          {{ 'customer.register.title' | t }}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Login",
+  "settings": []
+}
+{% endschema %}
+

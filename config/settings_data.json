@@ -1,0 +1,53 @@
+{
+  "current": {
+    "logo_width": 150,
+    "color_bg_primary": "#0A0D14",
+    "color_bg_secondary": "#111827",
+    "color_text_primary": "#E5E7EB",
+    "color_text_secondary": "#9CA3AF",
+    "color_accent": "#3B82F6",
+    "color_border": "#1F2937",
+    "heading_scale": 100,
+    "body_scale": 100,
+    "page_width": 1400,
+    "spacing_sections": 50,
+    "cart_type": "drawer",
+    "cart_notes_enable": false,
+    "predictive_search_enabled": true,
+    "search_show_vendor": true,
+    "search_show_price": true,
+    "currency_code_enabled": false,
+    "sections": {
+      "announcement-bar": {
+        "type": "announcement-bar",
+        "settings": {
+          "show_announcement": true,
+          "announcement_text": "Welcome to Flux - Free shipping on orders over $50!",
+          "announcement_link": ""
+        }
+      },
+      "header": {
+        "type": "header",
+        "settings": {
+          "menu": "main-menu",
+          "enable_search": true,
+          "enable_sticky": true
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {
+          "footer_description": "An intelligent Shopify theme built for adaptive commerce.",
+          "show_social": true,
+          "footer_menu_1": "footer",
+          "show_newsletter": true,
+          "newsletter_heading": "Stay Connected",
+          "newsletter_subheading": "Get the latest updates and exclusive offers.",
+          "newsletter_button_text": "Subscribe",
+          "show_payment_icons": true
+        }
+      }
+    }
+  }
+}
+

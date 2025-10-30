@@ -1,0 +1,145 @@
+{{ 'section-header.css' | asset_url | stylesheet_tag }}
+
+<header class="sticky top-0 z-40 glass border-b border-border" data-section-id="{{ section.id }}" data-section-type="header">
+  <nav class="container-flux" aria-label="{{ 'general.navigation.main' | t }}">
+    <div class="flex items-center justify-between py-4 md:py-6">
+      
+      <!-- Mobile Menu Toggle -->
+      <button type="button" class="lg:hidden text-text-primary hover:text-accent" aria-label="{{ 'general.navigation.menu' | t }}" data-menu-open>
+        {%- render 'icon-menu' -%}
+      </button>
+
+      <!-- Logo -->
+      <div class="flex-shrink-0">
+        {%- if settings.logo != blank -%}
+          <a href="{{ routes.root_url }}" class="inline-block">
+            <img
+              src="{{ settings.logo | image_url: width: 200 }}"
+              srcset="{{ settings.logo | image_url: width: 200 }} 1x, {{ settings.logo | image_url: width: 400 }} 2x"
+              alt="{{ shop.name }}"
+              width="{{ settings.logo_width }}"
+              height="auto"
+              loading="eager"
+              class="h-8 md:h-10 w-auto"
+            >
+          </a>
+        {%- else -%}
+          <a href="{{ routes.root_url }}" class="text-2xl md:text-3xl font-bold gradient-text">
+            {{ shop.name }}
+          </a>
+        {%- endif -%}
+      </div>
+
+      <!-- Desktop Navigation -->
+      <ul class="hidden lg:flex items-center space-x-8">
+        {%- for link in section.settings.menu.links -%}
+          <li>
+            <a 
+              href="{{ link.url }}" 
+              class="text-text-primary hover:text-accent font-medium transition-colors duration-300 {% if link.active %}text-accent{% endif %}"
+              {% if link.current %}aria-current="page"{% endif %}
+            >
+              {{ link.title }}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <!-- Right Actions -->
+      <div class="flex items-center space-x-4">
+        <!-- Search Toggle -->
+        {%- if section.settings.enable_search -%}
+          <button type="button" class="text-text-primary hover:text-accent" aria-label="{{ 'general.search.search' | t }}" data-search-open>
+            {%- render 'icon-search' -%}
+          </button>
+        {%- endif -%}
+
+        <!-- Account Link -->
+        {%- if shop.customer_accounts_enabled -%}
+          <a href="{{ routes.account_url }}" class="hidden md:block text-text-primary hover:text-accent" aria-label="{{ 'customer.account.title' | t }}">
+            {%- render 'icon-account' -%}
+          </a>
+        {%- endif -%}
+
+        <!-- Cart -->
+        <button type="button" class="relative text-text-primary hover:text-accent" aria-label="{{ 'cart.general.title' | t }}" data-cart-open>
+          {%- render 'icon-cart' -%}
+          <span 
+            id="cart-count" 
+            class="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold {% if cart.item_count == 0 %}hidden{% endif %}"
+          >
+            {{ cart.item_count }}
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Bar (Hidden by default) -->
+    {%- if section.settings.enable_search -%}
+      <div id="search-bar" class="hidden pb-4">
+        <form action="{{ routes.search_url }}" method="get" role="search" class="relative">
+          <input
+            type="search"
+            name="q"
+            placeholder="{{ 'general.search.placeholder' | t }}"
+            class="input pr-12"
+            aria-label="{{ 'general.search.search' | t }}"
+          >
+          <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary hover:text-accent">
+            {%- render 'icon-search' -%}
+          </button>
+        </form>
+      </div>
+    {%- endif -%}
+  </nav>
+</header>
+
+<style>
+  #search-bar.active {
+    display: block;
+    animation: fadeInUp 0.3s ease-out;
+  }
+</style>
+
+<script>
+  // Search toggle
+  const searchOpen = document.querySelector('[data-search-open]');
+  const searchBar = document.getElementById('search-bar');
+  
+  if (searchOpen && searchBar) {
+    searchOpen.addEventListener('click', () => {
+      searchBar.classList.toggle('hidden');
+      searchBar.classList.toggle('active');
+      if (!searchBar.classList.contains('hidden')) {
+        searchBar.querySelector('input').focus();
+      }
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_search",
+      "label": "Enable search",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky",
+      "label": "Enable sticky header",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
+

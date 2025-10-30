@@ -1,0 +1,195 @@
+<footer class="bg-bg-secondary border-t border-border section-spacing" role="contentinfo">
+  <div class="container-flux">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
+      
+      <!-- Brand Column -->
+      <div class="space-y-4">
+        {%- if settings.logo != blank -%}
+          <img
+            src="{{ settings.logo | image_url: width: 150 }}"
+            alt="{{ shop.name }}"
+            width="150"
+            height="auto"
+            loading="lazy"
+            class="h-8 w-auto"
+          >
+        {%- else -%}
+          <h3 class="text-xl font-bold gradient-text">{{ shop.name }}</h3>
+        {%- endif -%}
+        
+        {%- if section.settings.footer_description != blank -%}
+          <p class="text-text-secondary text-sm">
+            {{ section.settings.footer_description }}
+          </p>
+        {%- endif -%}
+
+        <!-- Social Links -->
+        {%- if section.settings.show_social -%}
+          <div class="flex space-x-4">
+            {%- if settings.social_facebook_link != blank -%}
+              <a href="{{ settings.social_facebook_link }}" class="text-text-secondary hover:text-accent" target="_blank" rel="noopener" aria-label="Facebook">
+                {%- render 'icon-facebook' -%}
+              </a>
+            {%- endif -%}
+            {%- if settings.social_instagram_link != blank -%}
+              <a href="{{ settings.social_instagram_link }}" class="text-text-secondary hover:text-accent" target="_blank" rel="noopener" aria-label="Instagram">
+                {%- render 'icon-instagram' -%}
+              </a>
+            {%- endif -%}
+            {%- if settings.social_twitter_link != blank -%}
+              <a href="{{ settings.social_twitter_link }}" class="text-text-secondary hover:text-accent" target="_blank" rel="noopener" aria-label="Twitter">
+                {%- render 'icon-twitter' -%}
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Quick Links -->
+      {%- if section.settings.footer_menu_1 != blank -%}
+        <div>
+          <h4 class="text-lg font-semibold mb-4">{{ section.settings.footer_menu_1.title }}</h4>
+          <ul class="space-y-2">
+            {%- for link in section.settings.footer_menu_1.links -%}
+              <li>
+                <a href="{{ link.url }}" class="text-text-secondary hover:text-accent text-sm transition-colors duration-300">
+                  {{ link.title }}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      <!-- Customer Service -->
+      {%- if section.settings.footer_menu_2 != blank -%}
+        <div>
+          <h4 class="text-lg font-semibold mb-4">{{ section.settings.footer_menu_2.title }}</h4>
+          <ul class="space-y-2">
+            {%- for link in section.settings.footer_menu_2.links -%}
+              <li>
+                <a href="{{ link.url }}" class="text-text-secondary hover:text-accent text-sm transition-colors duration-300">
+                  {{ link.title }}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      <!-- Newsletter -->
+      {%- if section.settings.show_newsletter -%}
+        <div>
+          <h4 class="text-lg font-semibold mb-4">{{ section.settings.newsletter_heading }}</h4>
+          <p class="text-text-secondary text-sm mb-4">{{ section.settings.newsletter_subheading }}</p>
+          
+          {%- form 'customer', class: 'space-y-3' -%}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+            
+            <div class="relative">
+              <input
+                type="email"
+                name="contact[email]"
+                placeholder="{{ 'general.newsletter.email_placeholder' | t }}"
+                class="input"
+                aria-label="{{ 'general.newsletter.email_placeholder' | t }}"
+                required
+              >
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-full">
+              {{ section.settings.newsletter_button_text }}
+            </button>
+            
+            {%- if form.posted_successfully? -%}
+              <p class="text-green-400 text-sm">{{ 'general.newsletter.success' | t }}</p>
+            {%- endif -%}
+            
+            {%- if form.errors -%}
+              <p class="text-red-400 text-sm">{{ form.errors | default_errors }}</p>
+            {%- endif -%}
+          {%- endform -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="pt-8 border-t border-border">
+      <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <p class="text-text-secondary text-sm">
+          &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ 'general.footer.all_rights_reserved' | t }}
+        </p>
+        
+        {%- if section.settings.show_payment_icons -%}
+          <div class="flex items-center space-x-2">
+            {%- for type in shop.enabled_payment_types -%}
+              {{ type | payment_type_svg_tag: class: 'h-6 w-auto opacity-60' }}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "footer_description",
+      "label": "Description",
+      "default": "An intelligent Shopify theme built for adaptive commerce."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "label": "Show social links",
+      "default": true
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu_1",
+      "label": "First menu",
+      "default": "footer"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu_2",
+      "label": "Second menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_newsletter",
+      "label": "Show newsletter signup",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "newsletter_heading",
+      "label": "Newsletter heading",
+      "default": "Stay Connected"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_subheading",
+      "label": "Newsletter subheading",
+      "default": "Get the latest updates and exclusive offers."
+    },
+    {
+      "type": "text",
+      "id": "newsletter_button_text",
+      "label": "Newsletter button text",
+      "default": "Subscribe"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
+

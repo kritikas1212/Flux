@@ -1,0 +1,169 @@
+<div class="container-flux py-12">
+  <h1 class="text-4xl md:text-5xl font-bold mb-12 text-center">{{ 'cart.general.title' | t }}</h1>
+
+  <div id="main-cart-items" data-id="{{ cart.id }}">
+    {%- if cart.item_count > 0 -%}
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Cart Items -->
+        <div class="lg:col-span-2 space-y-4">
+          {%- for item in cart.items -%}
+            <div class="card flex gap-6" data-cart-item="{{ item.key }}">
+              
+              <!-- Product Image -->
+              <div class="flex-shrink-0">
+                {%- if item.image -%}
+                  <img
+                    src="{{ item.image | image_url: width: 150 }}"
+                    alt="{{ item.image.alt | escape }}"
+                    width="150"
+                    height="150"
+                    loading="lazy"
+                    class="rounded-lg w-24 h-24 object-cover"
+                  >
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'w-24 h-24 rounded-lg opacity-20' }}
+                {%- endif -%}
+              </div>
+
+              <!-- Product Details -->
+              <div class="flex-1 min-w-0">
+                <h3 class="text-lg font-semibold mb-2">
+                  <a href="{{ item.url }}" class="hover:text-accent transition-colors duration-300">
+                    {{ item.product.title }}
+                  </a>
+                </h3>
+
+                {%- unless item.product.has_only_default_variant -%}
+                  <p class="text-sm text-text-secondary mb-2">
+                    {%- for option in item.options_with_values -%}
+                      {{ option.name }}: {{ option.value }}
+                      {%- unless forloop.last -%}, {%- endunless -%}
+                    {%- endfor -%}
+                  </p>
+                {%- endunless -%}
+
+                <p class="text-xl font-bold mb-4">{{ item.final_line_price | money }}</p>
+
+                <!-- Quantity Controls -->
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center border border-border rounded-xl overflow-hidden">
+                    <button 
+                      type="button" 
+                      class="px-4 py-2 hover:bg-bg-primary"
+                      data-cart-change
+                      data-index="{{ forloop.index }}"
+                      data-quantity="{{ item.quantity | minus: 1 }}"
+                      aria-label="{{ 'cart.general.decrease_quantity' | t }}"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      value="{{ item.quantity }}"
+                      min="0"
+                      class="w-16 text-center bg-transparent border-0 focus:outline-none"
+                      data-cart-quantity="{{ forloop.index }}"
+                      aria-label="{{ 'cart.general.quantity' | t }}"
+                    >
+                    <button 
+                      type="button" 
+                      class="px-4 py-2 hover:bg-bg-primary"
+                      data-cart-change
+                      data-index="{{ forloop.index }}"
+                      data-quantity="{{ item.quantity | plus: 1 }}"
+                      aria-label="{{ 'cart.general.increase_quantity' | t }}"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <button 
+                    type="button"
+                    class="text-text-secondary hover:text-red-500 transition-colors duration-300"
+                    data-cart-remove
+                    data-index="{{ forloop.index }}"
+                    aria-label="{{ 'cart.general.remove' | t }}"
+                  >
+                    {{ 'cart.general.remove' | t }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="lg:col-span-1">
+          <div class="card sticky top-24">
+            <h2 class="text-2xl font-bold mb-6">{{ 'cart.general.summary' | t }}</h2>
+            
+            <div class="space-y-4 pb-6 border-b border-border">
+              <div class="flex justify-between text-text-secondary">
+                <span>{{ 'cart.general.subtotal' | t }}</span>
+                <span>{{ cart.total_price | money }}</span>
+              </div>
+
+              {%- if cart.cart_level_discount_applications.size > 0 -%}
+                {%- for discount in cart.cart_level_discount_applications -%}
+                  <div class="flex justify-between text-green-400">
+                    <span>{{ discount.title }}</span>
+                    <span>-{{ discount.total_allocated_amount | money }}</span>
+                  </div>
+                {%- endfor -%}
+              {%- endif -%}
+            </div>
+
+            <div class="flex justify-between text-xl font-bold my-6">
+              <span>{{ 'cart.general.total' | t }}</span>
+              <span>{{ cart.total_price | money }}</span>
+            </div>
+
+            <p class="text-sm text-text-secondary mb-6 text-center">
+              {{ 'cart.general.taxes_and_shipping' | t }}
+            </p>
+
+            <button 
+              type="submit" 
+              name="checkout"
+              class="btn btn-primary w-full mb-4"
+              onclick="window.location.href='/checkout'"
+            >
+              {{ 'cart.general.checkout' | t }}
+            </button>
+
+            <a href="{{ routes.all_products_collection_url }}" class="btn btn-secondary w-full text-center">
+              {{ 'cart.general.continue_shopping' | t }}
+            </a>
+
+            {%- if additional_checkout_buttons -%}
+              <div class="mt-4">
+                {{ content_for_additional_checkout_buttons }}
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    {%- else -%}
+      <!-- Empty Cart -->
+      <div class="text-center py-16">
+        <div class="mb-8">
+          {%- render 'icon-cart' -%}
+        </div>
+        <h2 class="text-2xl font-bold mb-4">{{ 'cart.general.empty' | t }}</h2>
+        <p class="text-text-secondary mb-8">{{ 'cart.general.empty_text' | t }}</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary">
+          {{ 'cart.general.continue_shopping' | t }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cart",
+  "settings": []
+}
+{% endschema %}
+

@@ -1,0 +1,162 @@
+{
+  "general": {
+    "accessibility": {
+      "skip_to_content": "Skip to content",
+      "refresh_page": "Choosing a selection results in a full page refresh.",
+      "link_messages": {
+        "new_window": "Opens in a new window."
+      }
+    },
+    "meta": {
+      "tags": "Tagged \"{{ tags }}\"",
+      "page": "Page {{ page }}"
+    },
+    "404": {
+      "title": "404 Page Not Found",
+      "subtext": "The page you requested does not exist."
+    },
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "search": {
+      "search": "Search",
+      "placeholder": "Search products..."
+    },
+    "navigation": {
+      "menu": "Menu",
+      "main": "Main navigation",
+      "close_menu": "Close menu"
+    },
+    "newsletter": {
+      "email_placeholder": "Email address",
+      "success": "Thanks for subscribing!",
+      "button_label": "Subscribe"
+    },
+    "social": {
+      "share": "Share",
+      "share_on_facebook": "Share on Facebook",
+      "share_on_twitter": "Share on Twitter",
+      "share_on_pinterest": "Share on Pinterest"
+    },
+    "footer": {
+      "all_rights_reserved": "All rights reserved"
+    }
+  },
+  "sections": {
+    "announcement": {
+      "announcement": "Announcement"
+    },
+    "hero": {
+      "image_placeholder": "Hero Image"
+    },
+    "featured_collection": {
+      "no_products": "No products in this collection"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Cart",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "quick_add": "Quick Add",
+      "quantity": "Quantity",
+      "variants": "variants",
+      "vendor": "Vendor",
+      "related_products": "You May Also Like"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Cart",
+      "empty": "Your cart is empty",
+      "empty_text": "Add some products to get started",
+      "subtotal": "Subtotal",
+      "total": "Total",
+      "taxes_and_shipping": "Taxes and shipping calculated at checkout",
+      "checkout": "Checkout",
+      "continue_shopping": "Continue Shopping",
+      "view_cart": "View Cart",
+      "close_cart": "Close cart",
+      "quantity": "Quantity",
+      "increase_quantity": "Increase quantity",
+      "decrease_quantity": "Decrease quantity",
+      "remove": "Remove",
+      "summary": "Order Summary",
+      "cart_error": "There was an error updating your cart. Please try again.",
+      "quantity_error": "You can only add {{ quantity }} of this item to your cart."
+    }
+  },
+  "collections": {
+    "general": {
+      "no_products": "No products in this collection",
+      "browse_all": "Browse All Products",
+      "showing": "Showing {{ count }} products"
+    },
+    "sorting": {
+      "title": "Sort by",
+      "featured": "Featured",
+      "best_selling": "Best Selling",
+      "az": "Alphabetically, A-Z",
+      "za": "Alphabetically, Z-A",
+      "price_ascending": "Price, Low to High",
+      "price_descending": "Price, High to Low",
+      "date_descending": "Date, New to Old",
+      "date_ascending": "Date, Old to New"
+    }
+  },
+  "customer": {
+    "account": {
+      "title": "Account"
+    },
+    "login": {
+      "title": "Login",
+      "email": "Email",
+      "password": "Password",
+      "forgot_password": "Forgot your password?",
+      "sign_in": "Sign In",
+      "guest_title": "Continue as a guest",
+      "guest_continue": "Continue",
+      "cancel": "Return to Store"
+    },
+    "register": {
+      "title": "Create Account",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Create"
+    },
+    "orders": {
+      "title": "Order History",
+      "order_number": "Order",
+      "date": "Date",
+      "payment_status": "Payment Status",
+      "fulfillment_status": "Fulfillment Status",
+      "total": "Total",
+      "none": "You haven't placed any orders yet."
+    },
+    "order": {
+      "title": "Order {{ name }}",
+      "date": "Placed on {{ date }}",
+      "cancelled": "Order Cancelled on {{ date }}",
+      "cancelled_reason": "Reason: {{ reason }}",
+      "billing_address": "Billing Address",
+      "payment_status": "Payment Status",
+      "shipping_address": "Shipping Address",
+      "fulfillment_status": "Fulfillment Status",
+      "discount": "Discount",
+      "shipping": "Shipping",
+      "tax": "Tax",
+      "product": "Product",
+      "sku": "SKU",
+      "price": "Price",
+      "quantity": "Quantity",
+      "total": "Total",
+      "subtotal": "Subtotal"
+    },
+    "log_out": "Log out"
+  }
+}
+

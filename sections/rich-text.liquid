@@ -1,0 +1,74 @@
+<section class="section-spacing" data-section-id="{{ section.id }}" data-section-type="rich-text">
+  <div class="container-flux">
+    <div class="max-w-4xl mx-auto text-center">
+      
+      {%- if section.settings.heading != blank -%}
+        <h2 class="mb-6 animate-fade-in-up">
+          {%- if section.settings.heading_gradient -%}
+            <span class="gradient-text">{{ section.settings.heading }}</span>
+          {%- else -%}
+            {{ section.settings.heading }}
+          {%- endif -%}
+        </h2>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <div class="prose prose-invert prose-lg max-w-none animate-fade-in-up animation-delay-200">
+          {{ section.settings.text }}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.button_text != blank -%}
+        <div class="mt-8 animate-fade-in-up animation-delay-400">
+          <a href="{{ section.settings.button_link }}" class="btn btn-primary">
+            {{ section.settings.button_text }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Rich Text",
+  "tag": "section",
+  "class": "rich-text-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Rich Text Section"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_gradient",
+      "label": "Use gradient for heading",
+      "default": true
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Use this section to create compelling content about your brand, products, or services.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rich Text"
+    }
+  ]
+}
+{% endschema %}
+

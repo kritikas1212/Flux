@@ -1,0 +1,107 @@
+<div class="container-flux py-12">
+  <div class="max-w-md mx-auto">
+    <div class="card">
+      <h1 class="text-3xl font-bold mb-6 text-center">{{ 'customer.register.title' | t }}</h1>
+
+      {%- form 'create_customer', novalidate: 'novalidate' -%}
+        {%- if form.errors -%}
+          <div class="bg-red-500 bg-opacity-10 border border-red-500 rounded-xl p-4 mb-6">
+            <ul class="text-red-400 text-sm space-y-1">
+              {%- for field in form.errors -%}
+                <li>{{ field | capitalize }} {{ form.errors.messages[field] }}</li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+        <div class="space-y-4">
+          <div>
+            <label for="RegisterFirstName" class="block text-sm font-semibold mb-2">
+              {{ 'customer.register.first_name' | t }}
+            </label>
+            <input
+              type="text"
+              name="customer[first_name]"
+              id="RegisterFirstName"
+              autocomplete="given-name"
+              class="input"
+              {%- if form.first_name -%}
+                value="{{ form.first_name }}"
+              {%- endif -%}
+              required
+            >
+          </div>
+
+          <div>
+            <label for="RegisterLastName" class="block text-sm font-semibold mb-2">
+              {{ 'customer.register.last_name' | t }}
+            </label>
+            <input
+              type="text"
+              name="customer[last_name]"
+              id="RegisterLastName"
+              autocomplete="family-name"
+              class="input"
+              {%- if form.last_name -%}
+                value="{{ form.last_name }}"
+              {%- endif -%}
+              required
+            >
+          </div>
+
+          <div>
+            <label for="RegisterEmail" class="block text-sm font-semibold mb-2">
+              {{ 'customer.register.email' | t }}
+            </label>
+            <input
+              type="email"
+              name="customer[email]"
+              id="RegisterEmail"
+              autocomplete="email"
+              class="input"
+              {%- if form.email -%}
+                value="{{ form.email }}"
+              {%- endif -%}
+              required
+            >
+          </div>
+
+          <div>
+            <label for="RegisterPassword" class="block text-sm font-semibold mb-2">
+              {{ 'customer.register.password' | t }}
+            </label>
+            <input
+              type="password"
+              name="customer[password]"
+              id="RegisterPassword"
+              autocomplete="new-password"
+              class="input"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <button type="submit" class="btn btn-primary w-full">
+            {{ 'customer.register.submit' | t }}
+          </button>
+        </div>
+      {%- endform -%}
+
+      <div class="mt-8 pt-6 border-t border-border text-center">
+        <p class="text-text-secondary mb-4">Already have an account?</p>
+        <a href="{{ routes.account_login_url }}" class="btn btn-outline w-full">
+          {{ 'customer.login.title' | t }}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Register",
+  "settings": []
+}
+{% endschema %}
+

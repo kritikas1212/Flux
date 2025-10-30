@@ -1,0 +1,121 @@
+{%- comment -%}
+  Renders a product card
+
+  Accepts:
+  - product: {Object} Product Liquid object
+  - show_vendor: {Boolean} Show product vendor (optional)
+  - show_quick_add: {Boolean} Show quick add button (optional)
+
+  Usage:
+  {% render 'product-card', product: product %}
+{%- endcomment -%}
+
+<article class="group card hover:border-accent" aria-label="{{ product.title | escape }}">
+  <a href="{{ product.url }}" class="block">
+    
+    <!-- Product Image -->
+    <div class="relative aspect-square overflow-hidden rounded-xl mb-4 bg-bg-primary">
+      {%- if product.featured_media -%}
+        <img
+          srcset="
+            {%- if product.featured_media.width >= 165 -%}{{ product.featured_media | image_url: width: 165 }} 165w,{%- endif -%}
+            {%- if product.featured_media.width >= 360 -%}{{ product.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
+            {%- if product.featured_media.width >= 533 -%}{{ product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
+            {%- if product.featured_media.width >= 720 -%}{{ product.featured_media | image_url: width: 720 }} 720w,{%- endif -%}
+            {%- if product.featured_media.width >= 940 -%}{{ product.featured_media | image_url: width: 940 }} 940w,{%- endif -%}
+            {{ product.featured_media | image_url }} {{ product.featured_media.width }}w
+          "
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+          src="{{ product.featured_media | image_url: width: 533 }}"
+          alt="{{ product.featured_media.alt | escape }}"
+          loading="lazy"
+          width="{{ product.featured_media.width }}"
+          height="{{ product.featured_media.height }}"
+          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        >
+        
+        {%- if product.media[1] != blank -%}
+          <img
+            srcset="
+              {%- if product.media[1].width >= 165 -%}{{ product.media[1] | image_url: width: 165 }} 165w,{%- endif -%}
+              {%- if product.media[1].width >= 360 -%}{{ product.media[1] | image_url: width: 360 }} 360w,{%- endif -%}
+              {%- if product.media[1].width >= 533 -%}{{ product.media[1] | image_url: width: 533 }} 533w,{%- endif -%}
+              {{ product.media[1] | image_url }} {{ product.media[1].width }}w
+            "
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+            src="{{ product.media[1] | image_url: width: 533 }}"
+            alt="{{ product.media[1].alt | escape }}"
+            loading="lazy"
+            width="{{ product.media[1].width }}"
+            height="{{ product.media[1].height }}"
+            class="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          >
+        {%- endif -%}
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'w-full h-full object-cover opacity-20' }}
+      {%- endif -%}
+
+      <!-- Badges -->
+      <div class="absolute top-3 left-3 flex flex-col gap-2">
+        {%- if product.available == false -%}
+          <span class="px-3 py-1 bg-bg-secondary text-text-primary text-xs font-semibold rounded-lg">
+            {{ 'products.product.sold_out' | t }}
+          </span>
+        {%- elsif product.compare_at_price > product.price -%}
+          {%- liquid
+            assign discount_percentage = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
+          -%}
+          <span class="px-3 py-1 bg-gradient-primary text-white text-xs font-semibold rounded-lg">
+            -{{ discount_percentage }}%
+          </span>
+        {%- endif -%}
+      </div>
+
+      <!-- Quick Add Button (Optional) -->
+      {%- if show_quick_add and product.available -%}
+        <div class="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <button 
+            type="button" 
+            class="btn btn-primary w-full"
+            data-product-id="{{ product.id }}"
+            data-quick-add
+          >
+            {{ 'products.product.quick_add' | t }}
+          </button>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <!-- Product Info -->
+    <div class="space-y-2">
+      {%- if show_vendor and product.vendor != blank -%}
+        <p class="text-xs text-text-secondary uppercase tracking-wide">{{ product.vendor }}</p>
+      {%- endif -%}
+
+      <h3 class="text-lg font-semibold text-text-primary group-hover:text-accent transition-colors duration-300 line-clamp-2">
+        {{ product.title }}
+      </h3>
+
+      <!-- Price -->
+      <div class="flex items-center gap-2">
+        <span class="text-xl font-bold text-text-primary">
+          {{ product.price | money }}
+        </span>
+        
+        {%- if product.compare_at_price > product.price -%}
+          <span class="text-sm text-text-secondary line-through">
+            {{ product.compare_at_price | money }}
+          </span>
+        {%- endif -%}
+      </div>
+
+      <!-- Variant Count (if applicable) -->
+      {%- if product.variants.size > 1 -%}
+        <p class="text-xs text-text-secondary">
+          {{ product.variants.size }} {{ 'products.product.variants' | t }}
+        </p>
+      {%- endif -%}
+    </div>
+  </a>
+</article>
+

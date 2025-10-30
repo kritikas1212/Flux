@@ -1,0 +1,163 @@
+<div class="container-flux py-12">
+  
+  <!-- Search Header -->
+  <div class="text-center mb-12">
+    <h1 class="text-4xl md:text-6xl font-bold mb-6">
+      {%- if search.performed -%}
+        {%- if search.results_count > 0 -%}
+          Search Results
+        {%- else -%}
+          No Results Found
+        {%- endif -%}
+      {%- else -%}
+        Search
+      {%- endif -%}
+    </h1>
+
+    <!-- Search Form -->
+    <form action="{{ routes.search_url }}" method="get" role="search" class="max-w-2xl mx-auto">
+      <div class="relative">
+        <input
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="{{ 'general.search.placeholder' | t }}"
+          class="input pr-12"
+          autofocus
+        >
+        <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary hover:text-accent">
+          {%- render 'icon-search' -%}
+        </button>
+      </div>
+    </form>
+
+    {%- if search.performed -%}
+      <p class="text-text-secondary mt-4">
+        {%- if search.results_count > 0 -%}
+          Found {{ search.results_count }} result(s) for "{{ search.terms }}"
+        {%- else -%}
+          No results found for "{{ search.terms }}"
+        {%- endif -%}
+      </p>
+    {%- endif -%}
+  </div>
+
+  {%- if search.performed and search.results_count > 0 -%}
+    <!-- Search Results -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+      {%- for item in search.results -%}
+        {%- case item.object_type -%}
+          {%- when 'product' -%}
+            <div class="animate-fade-in-up" style="animation-delay: {{ forloop.index | modulo: 8 | times: 50 }}ms;">
+              {%- render 'product-card', product: item, show_vendor: true -%}
+            </div>
+          
+          {%- when 'article' -%}
+            <article class="card animate-fade-in-up" style="animation-delay: {{ forloop.index | modulo: 8 | times: 50 }}ms;">
+              {%- if item.image -%}
+                <a href="{{ item.url }}" class="block mb-4">
+                  <img
+                    src="{{ item.image | image_url: width: 600 }}"
+                    alt="{{ item.image.alt | escape }}"
+                    loading="lazy"
+                    class="w-full h-48 object-cover rounded-lg"
+                  >
+                </a>
+              {%- endif -%}
+              
+              <p class="text-xs text-text-secondary uppercase tracking-wide mb-2">Article</p>
+              <h3 class="text-lg font-semibold mb-2">
+                <a href="{{ item.url }}" class="hover:text-accent transition-colors duration-300">
+                  {{ item.title }}
+                </a>
+              </h3>
+              
+              {%- if item.excerpt != blank -%}
+                <p class="text-sm text-text-secondary line-clamp-2">
+                  {{ item.excerpt | strip_html }}
+                </p>
+              {%- endif -%}
+            </article>
+
+          {%- when 'page' -%}
+            <article class="card animate-fade-in-up" style="animation-delay: {{ forloop.index | modulo: 8 | times: 50 }}ms;">
+              <p class="text-xs text-text-secondary uppercase tracking-wide mb-2">Page</p>
+              <h3 class="text-lg font-semibold mb-2">
+                <a href="{{ item.url }}" class="hover:text-accent transition-colors duration-300">
+                  {{ item.title }}
+                </a>
+              </h3>
+              
+              {%- if item.content != blank -%}
+                <p class="text-sm text-text-secondary line-clamp-3">
+                  {{ item.content | strip_html | truncatewords: 20 }}
+                </p>
+              {%- endif -%}
+            </article>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    <!-- Pagination -->
+    {%- if paginate.pages > 1 -%}
+      {%- paginate search.results by 24 -%}
+        <nav class="mt-16 flex justify-center">
+          <ul class="flex gap-2">
+            {%- if paginate.previous -%}
+              <li>
+                <a href="{{ paginate.previous.url }}" class="btn btn-secondary">
+                  {{ 'general.pagination.previous' | t }}
+                </a>
+              </li>
+            {%- endif -%}
+
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <li>
+                  <a href="{{ part.url }}" class="btn btn-secondary">
+                    {{ part.title }}
+                  </a>
+                </li>
+              {%- else -%}
+                {%- if part.title == paginate.current_page -%}
+                  <li>
+                    <span class="btn btn-primary">
+                      {{ part.title }}
+                    </span>
+                  </li>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- if paginate.next -%}
+              <li>
+                <a href="{{ paginate.next.url }}" class="btn btn-secondary">
+                  {{ 'general.pagination.next' | t }}
+                </a>
+              </li>
+            {%- endif -%}
+          </ul>
+        </nav>
+      {%- endpaginate -%}
+    {%- endif -%}
+
+  {%- elsif search.performed -%}
+    <!-- No Results -->
+    <div class="text-center py-16">
+      <p class="text-xl text-text-secondary mb-8">
+        Try searching with different keywords or browse our collections
+      </p>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary">
+        Shop All Products
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Search",
+  "settings": []
+}
+{% endschema %}
+

@@ -1,0 +1,189 @@
+<section class="relative section-spacing overflow-hidden" data-section-id="{{ section.id }}" data-section-type="hero">
+  <!-- Background Elements -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-accent opacity-10 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-gradient-start opacity-10 rounded-full blur-3xl animate-pulse animation-delay-400"></div>
+  </div>
+
+  <div class="container-flux relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      
+      <!-- Content Column -->
+      <div class="space-y-6 md:space-y-8 animate-fade-in-up">
+        {%- if section.settings.heading != blank -%}
+          <h1 class="text-balance">
+            {%- if section.settings.heading_gradient -%}
+              <span class="gradient-text">{{ section.settings.heading }}</span>
+            {%- else -%}
+              {{ section.settings.heading }}
+            {%- endif -%}
+          </h1>
+        {%- endif -%}
+
+        {%- if section.settings.subheading != blank -%}
+          <p class="text-lg md:text-xl text-text-secondary max-w-xl">
+            {{ section.settings.subheading }}
+          </p>
+        {%- endif -%}
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4">
+          {%- if section.settings.button_primary_text != blank -%}
+            <a 
+              href="{{ section.settings.button_primary_link }}" 
+              class="btn btn-primary text-center"
+            >
+              {{ section.settings.button_primary_text }}
+            </a>
+          {%- endif -%}
+
+          {%- if section.settings.button_secondary_text != blank -%}
+            <a 
+              href="{{ section.settings.button_secondary_link }}" 
+              class="btn btn-outline text-center"
+            >
+              {{ section.settings.button_secondary_text }}
+            </a>
+          {%- endif -%}
+        </div>
+
+        <!-- Trust Badges / Features -->
+        {%- if section.settings.show_features -%}
+          <div class="flex flex-wrap gap-6 pt-4">
+            <div class="flex items-center gap-2 text-text-secondary">
+              {%- render 'icon-checkmark' -%}
+              <span class="text-sm">{{ section.settings.feature_1 }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-text-secondary">
+              {%- render 'icon-checkmark' -%}
+              <span class="text-sm">{{ section.settings.feature_2 }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-text-secondary">
+              {%- render 'icon-checkmark' -%}
+              <span class="text-sm">{{ section.settings.feature_3 }}</span>
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Image Column -->
+      {%- if section.settings.image != blank -%}
+        <div class="relative animate-fade-in animation-delay-200">
+          <div class="relative overflow-hidden rounded-2xl hover-glow">
+            {%- liquid
+              assign image_height = section.settings.image.width | divided_by: section.settings.image.aspect_ratio | round
+            -%}
+            <img
+              srcset="
+                {%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
+                {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
+                {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
+                {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
+                {{ section.settings.image | image_url }} {{ section.settings.image.width }}w
+              "
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              src="{{ section.settings.image | image_url: width: 1500 }}"
+              loading="eager"
+              fetchpriority="high"
+              alt="{{ section.settings.image.alt | escape }}"
+              width="{{ section.settings.image.width }}"
+              height="{{ image_height }}"
+              class="w-full h-auto"
+            >
+          </div>
+        </div>
+      {%- else -%}
+        <div class="relative animate-fade-in animation-delay-200">
+          <div class="aspect-square bg-bg-secondary rounded-2xl flex items-center justify-center">
+            <p class="text-text-secondary">{{ 'sections.hero.image_placeholder' | t }}</p>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "tag": "section",
+  "class": "hero-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Welcome to the Future of Commerce"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_gradient",
+      "label": "Use gradient for heading",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Experience intelligent design that adapts to your brand and grows with your business."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero image"
+    },
+    {
+      "type": "text",
+      "id": "button_primary_text",
+      "label": "Primary button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_primary_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "button_secondary_text",
+      "label": "Secondary button text",
+      "default": "Learn More"
+    },
+    {
+      "type": "url",
+      "id": "button_secondary_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_features",
+      "label": "Show feature badges",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "feature_1",
+      "label": "Feature 1",
+      "default": "Free Shipping"
+    },
+    {
+      "type": "text",
+      "id": "feature_2",
+      "label": "Feature 2",
+      "default": "Easy Returns"
+    },
+    {
+      "type": "text",
+      "id": "feature_3",
+      "label": "Feature 3",
+      "default": "Secure Checkout"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero"
+    }
+  ]
+}
+{% endschema %}
+

@@ -1,0 +1,37 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "heading": "Welcome to Flux",
+        "heading_gradient": true,
+        "subheading": "Experience the future of adaptive commerce with intelligent design that evolves with your brand.",
+        "button_primary_text": "Shop Now",
+        "button_primary_link": "/collections/all",
+        "button_secondary_text": "Learn More",
+        "button_secondary_link": "/pages/about",
+        "show_features": true,
+        "feature_1": "Free Shipping",
+        "feature_2": "Easy Returns",
+        "feature_3": "Secure Checkout"
+      }
+    },
+    "featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "Featured Products",
+        "heading_gradient": true,
+        "subheading": "Discover our most popular items",
+        "products_to_show": 4,
+        "grid_columns": 4,
+        "show_view_all": true,
+        "button_text": "View All Products"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "featured_collection"
+  ]
+}
+

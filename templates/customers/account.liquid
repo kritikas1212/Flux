@@ -1,0 +1,122 @@
+<div class="container-flux py-12">
+  <div class="max-w-6xl mx-auto">
+    
+    <!-- Account Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4">
+      <div>
+        <h1 class="text-4xl font-bold mb-2">{{ 'customer.account.title' | t }}</h1>
+        <p class="text-text-secondary">Welcome back, {{ customer.first_name }}!</p>
+      </div>
+      <a href="{{ routes.account_logout_url }}" class="btn btn-secondary">
+        {{ 'customer.log_out' | t }}
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Account Info -->
+      <div class="lg:col-span-1">
+        <div class="card">
+          <h2 class="text-2xl font-bold mb-6">Account Details</h2>
+          
+          <div class="space-y-4 text-sm">
+            <div>
+              <p class="text-text-secondary mb-1">Name</p>
+              <p class="font-semibold">{{ customer.name }}</p>
+            </div>
+            
+            <div>
+              <p class="text-text-secondary mb-1">Email</p>
+              <p class="font-semibold">{{ customer.email }}</p>
+            </div>
+
+            {%- if customer.default_address -%}
+              <div>
+                <p class="text-text-secondary mb-1">Default Address</p>
+                <address class="not-italic">
+                  {{ customer.default_address.address1 }}<br>
+                  {%- if customer.default_address.address2 != blank -%}
+                    {{ customer.default_address.address2 }}<br>
+                  {%- endif -%}
+                  {{ customer.default_address.city }}, {{ customer.default_address.province_code }} {{ customer.default_address.zip }}<br>
+                  {{ customer.default_address.country }}
+                </address>
+              </div>
+            {%- endif -%}
+          </div>
+
+          <div class="mt-6">
+            <a href="{{ routes.account_addresses_url }}" class="btn btn-outline w-full">
+              Manage Addresses
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order History -->
+      <div class="lg:col-span-2">
+        <div class="card">
+          <h2 class="text-2xl font-bold mb-6">{{ 'customer.orders.title' | t }}</h2>
+
+          {%- if customer.orders.size > 0 -%}
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="border-b border-border">
+                  <tr class="text-left">
+                    <th class="pb-3 font-semibold">{{ 'customer.orders.order_number' | t }}</th>
+                    <th class="pb-3 font-semibold">{{ 'customer.orders.date' | t }}</th>
+                    <th class="pb-3 font-semibold">{{ 'customer.orders.payment_status' | t }}</th>
+                    <th class="pb-3 font-semibold">{{ 'customer.orders.total' | t }}</th>
+                    <th class="pb-3"></th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                  {%- for order in customer.orders -%}
+                    <tr>
+                      <td class="py-4">
+                        <a href="{{ order.customer_url }}" class="text-accent hover:underline">
+                          {{ order.name }}
+                        </a>
+                      </td>
+                      <td class="py-4 text-text-secondary">
+                        {{ order.created_at | date: format: 'date' }}
+                      </td>
+                      <td class="py-4">
+                        <span class="px-3 py-1 bg-bg-primary rounded-lg text-xs">
+                          {{ order.financial_status_label }}
+                        </span>
+                      </td>
+                      <td class="py-4 font-semibold">
+                        {{ order.total_price | money }}
+                      </td>
+                      <td class="py-4 text-right">
+                        <a href="{{ order.customer_url }}" class="text-accent hover:underline text-sm">
+                          View
+                        </a>
+                      </td>
+                    </tr>
+                  {%- endfor -%}
+                </tbody>
+              </table>
+            </div>
+          {%- else -%}
+            <div class="text-center py-12">
+              <p class="text-text-secondary mb-6">{{ 'customer.orders.none' | t }}</p>
+              <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary">
+                Start Shopping
+              </a>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Account",
+  "settings": []
+}
+{% endschema %}
+

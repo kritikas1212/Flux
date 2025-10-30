@@ -1,0 +1,16 @@
+{
+  "name": "flux-shopify-theme",
+  "version": "1.0.0",
+  "description": "Flux - An intelligent Shopify theme built for adaptive commerce",
+  "author": "Your Name",
+  "license": "MIT",
+  "scripts": {
+    "build:css": "tailwindcss -i ./assets/theme.css -o ./assets/theme.min.css --minify",
+    "watch:css": "tailwindcss -i ./assets/theme.css -o ./assets/theme.min.css --watch",
+    "dev": "npm run watch:css"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
+

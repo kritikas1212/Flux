@@ -1,0 +1,261 @@
+<div class="container-flux py-12">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
+    
+    <!-- Product Images -->
+    <div class="space-y-4">
+      <div class="sticky top-24">
+        {%- if product.media.size > 0 -%}
+          <!-- Main Image -->
+          <div class="relative aspect-square overflow-hidden rounded-2xl bg-bg-secondary mb-4" id="main-product-image">
+            {%- assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
+            <img
+              src="{{ featured_media | image_url: width: 1000 }}"
+              srcset="
+                {%- if featured_media.width >= 500 -%}{{ featured_media | image_url: width: 500 }} 500w,{%- endif -%}
+                {%- if featured_media.width >= 750 -%}{{ featured_media | image_url: width: 750 }} 750w,{%- endif -%}
+                {%- if featured_media.width >= 1000 -%}{{ featured_media | image_url: width: 1000 }} 1000w,{%- endif -%}
+                {{ featured_media | image_url }} {{ featured_media.width }}w
+              "
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              alt="{{ featured_media.alt | escape }}"
+              width="{{ featured_media.width }}"
+              height="{{ featured_media.height }}"
+              loading="eager"
+              class="w-full h-full object-cover"
+            >
+          </div>
+
+          <!-- Thumbnails -->
+          {%- if product.media.size > 1 -%}
+            <div class="grid grid-cols-4 gap-2">
+              {%- for media in product.media limit: 4 -%}
+                <button
+                  type="button"
+                  class="aspect-square rounded-lg overflow-hidden border-2 border-transparent hover:border-accent transition-colors duration-300 {% if forloop.first %}border-accent{% endif %}"
+                  data-media-id="{{ media.id }}"
+                  data-thumbnail
+                >
+                  <img
+                    src="{{ media | image_url: width: 200 }}"
+                    alt="{{ media.alt | escape }}"
+                    width="200"
+                    height="200"
+                    loading="lazy"
+                    class="w-full h-full object-cover"
+                  >
+                </button>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        {%- else -%}
+          <div class="aspect-square bg-bg-secondary rounded-2xl flex items-center justify-center">
+            {{ 'product-1' | placeholder_svg_tag: 'w-full h-full object-cover opacity-20' }}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <!-- Product Info -->
+    <div class="space-y-6">
+      {%- if product.vendor != blank -%}
+        <p class="text-sm text-text-secondary uppercase tracking-wide">{{ product.vendor }}</p>
+      {%- endif -%}
+
+      <h1 class="text-4xl md:text-5xl font-bold">{{ product.title }}</h1>
+
+      <!-- Price -->
+      <div class="flex items-center gap-4">
+        <span class="text-3xl font-bold text-text-primary" id="product-price">
+          {{ product.selected_or_first_available_variant.price | money }}
+        </span>
+        
+        {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+          <span class="text-xl text-text-secondary line-through" id="product-compare-price">
+            {{ product.selected_or_first_available_variant.compare_at_price | money }}
+          </span>
+        {%- endif -%}
+      </div>
+
+      <!-- Description -->
+      {%- if product.description != blank -%}
+        <div class="prose prose-invert max-w-none text-text-secondary">
+          {{ product.description }}
+        </div>
+      {%- endif -%}
+
+      <!-- Product Form -->
+      {%- form 'product', product, id: 'product-form', class: 'space-y-6' -%}
+        
+        <!-- Variants -->
+        {%- unless product.has_only_default_variant -%}
+          <div class="space-y-4">
+            {%- for option in product.options_with_values -%}
+              <div>
+                <label for="Option-{{ option.name | handleize }}" class="block text-sm font-semibold mb-2">
+                  {{ option.name }}
+                </label>
+                
+                {%- if option.name == 'Color' or option.name == 'Colour' -%}
+                  <!-- Color Swatches -->
+                  <div class="flex flex-wrap gap-2">
+                    {%- for value in option.values -%}
+                      <input
+                        type="radio"
+                        id="{{ option.name | handleize }}-{{ value | handleize }}"
+                        name="options[{{ option.name | escape }}]"
+                        value="{{ value | escape }}"
+                        form="product-form"
+                        {% if option.selected_value == value %}checked{% endif %}
+                        class="sr-only"
+                      >
+                      <label
+                        for="{{ option.name | handleize }}-{{ value | handleize }}"
+                        class="w-12 h-12 rounded-full border-2 border-border cursor-pointer hover:border-accent transition-colors duration-300 flex items-center justify-center"
+                        style="background-color: {{ value | handleize }}"
+                        title="{{ value | escape }}"
+                      >
+                        <span class="sr-only">{{ value }}</span>
+                      </label>
+                    {%- endfor -%}
+                  </div>
+                {%- else -%}
+                  <!-- Standard Select -->
+                  <select
+                    id="Option-{{ option.name | handleize }}"
+                    name="options[{{ option.name | escape }}]"
+                    form="product-form"
+                    class="input"
+                  >
+                    {%- for value in option.values -%}
+                      <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>
+                        {{ value }}
+                      </option>
+                    {%- endfor -%}
+                  </select>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endunless -%}
+
+        <!-- Quantity -->
+        <div>
+          <label for="Quantity" class="block text-sm font-semibold mb-2">
+            {{ 'products.product.quantity' | t }}
+          </label>
+          <div class="flex items-center border border-border rounded-xl overflow-hidden w-32">
+            <button type="button" class="px-4 py-3 hover:bg-bg-secondary" data-quantity-minus>-</button>
+            <input
+              type="number"
+              id="Quantity"
+              name="quantity"
+              value="1"
+              min="1"
+              class="w-full text-center bg-transparent border-0 focus:outline-none"
+              form="product-form"
+            >
+            <button type="button" class="px-4 py-3 hover:bg-bg-secondary" data-quantity-plus>+</button>
+          </div>
+        </div>
+
+        <!-- Add to Cart Button -->
+        <button
+          type="submit"
+          name="add"
+          class="btn btn-primary w-full text-lg py-4"
+          {% unless product.available %}disabled{% endunless %}
+        >
+          {%- if product.available -%}
+            {{ 'products.product.add_to_cart' | t }}
+          {%- else -%}
+            {{ 'products.product.sold_out' | t }}
+          {%- endif -%}
+        </button>
+
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      {%- endform -%}
+
+      <!-- Product Meta -->
+      <div class="border-t border-border pt-6 space-y-2 text-sm text-text-secondary">
+        {%- if product.selected_or_first_available_variant.sku != blank -%}
+          <p><strong>SKU:</strong> {{ product.selected_or_first_available_variant.sku }}</p>
+        {%- endif -%}
+        
+        {%- if product.tags.size > 0 -%}
+          <p><strong>Tags:</strong> {{ product.tags | join: ', ' }}</p>
+        {%- endif -%}
+      </div>
+
+      <!-- Social Share -->
+      {%- render 'social-share', share_title: product.title, share_permalink: product.url, share_image: product.featured_media -%}
+    </div>
+  </div>
+</div>
+
+<!-- Related Products -->
+{%- if product.collections.first -%}
+  <div class="container-flux py-16">
+    <h2 class="text-3xl font-bold mb-8">{{ 'products.product.related_products' | t }}</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {%- for product in product.collections.first.products limit: 4 -%}
+        {%- unless product.id == product.id -%}
+          {%- render 'product-card', product: product -%}
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+<script>
+  // Variant selection
+  const productForm = document.getElementById('product-form');
+  if (productForm) {
+    const inputs = productForm.querySelectorAll('input[type="radio"], select');
+    inputs.forEach(input => {
+      input.addEventListener('change', () => {
+        const formData = new FormData(productForm);
+        const params = new URLSearchParams(formData);
+        fetch(`${window.location.pathname}?${params}`)
+          .then(response => response.text())
+          .then(data => {
+            // Update price, availability, etc.
+          });
+      });
+    });
+  }
+
+  // Quantity controls
+  document.querySelector('[data-quantity-minus]')?.addEventListener('click', function() {
+    const input = document.getElementById('Quantity');
+    const value = parseInt(input.value) || 1;
+    if (value > 1) input.value = value - 1;
+  });
+
+  document.querySelector('[data-quantity-plus]')?.addEventListener('click', function() {
+    const input = document.getElementById('Quantity');
+    const value = parseInt(input.value) || 1;
+    input.value = value + 1;
+  });
+
+  // Thumbnail clicks
+  document.querySelectorAll('[data-thumbnail]').forEach(thumb => {
+    thumb.addEventListener('click', function() {
+      document.querySelectorAll('[data-thumbnail]').forEach(t => t.classList.remove('border-accent'));
+      this.classList.add('border-accent');
+      
+      const img = this.querySelector('img');
+      const mainImage = document.querySelector('#main-product-image img');
+      if (img && mainImage) {
+        mainImage.src = img.src.replace('width=200', 'width=1000');
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": []
+}
+{% endschema %}
+

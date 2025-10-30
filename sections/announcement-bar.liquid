@@ -1,0 +1,41 @@
+{%- if section.settings.show_announcement -%}
+  <div class="bg-gradient-primary text-white py-3 text-center no-print" role="region" aria-label="{{ 'sections.announcement.announcement' | t }}">
+    <div class="container-flux">
+      <p class="text-sm md:text-base font-medium">
+        {%- if section.settings.announcement_link != blank -%}
+          <a href="{{ section.settings.announcement_link }}" class="hover:opacity-80 transition-opacity duration-300">
+            {{ section.settings.announcement_text }}
+          </a>
+        {%- else -%}
+          {{ section.settings.announcement_text }}
+        {%- endif -%}
+      </p>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement Bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Show announcement",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "Announcement text",
+      "default": "Welcome to Flux - Free shipping on orders over $50!"
+    },
+    {
+      "type": "url",
+      "id": "announcement_link",
+      "label": "Announcement link"
+    }
+  ]
+}
+{% endschema %}
+

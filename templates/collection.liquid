@@ -1,0 +1,130 @@
+<div class="container-flux py-12">
+  
+  <!-- Collection Header -->
+  <div class="text-center mb-12">
+    <h1 class="text-4xl md:text-6xl font-bold mb-4">{{ collection.title }}</h1>
+    
+    {%- if collection.description != blank -%}
+      <div class="prose prose-invert max-w-2xl mx-auto text-text-secondary">
+        {{ collection.description }}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- if collection.products.size > 0 -%}
+    <!-- Filters and Sort (Optional Enhancement) -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 pb-8 border-b border-border">
+      <p class="text-text-secondary">
+        {{ 'collections.general.showing' | t: count: collection.products_count }}
+      </p>
+      
+      <div class="flex gap-4">
+        <!-- Sort Dropdown -->
+        <select id="SortBy" class="input w-auto" aria-label="{{ 'collections.sorting.title' | t }}">
+          <option value="manual">{{ 'collections.sorting.featured' | t }}</option>
+          <option value="best-selling">{{ 'collections.sorting.best_selling' | t }}</option>
+          <option value="title-ascending">{{ 'collections.sorting.az' | t }}</option>
+          <option value="title-descending">{{ 'collections.sorting.za' | t }}</option>
+          <option value="price-ascending">{{ 'collections.sorting.price_ascending' | t }}</option>
+          <option value="price-descending">{{ 'collections.sorting.price_descending' | t }}</option>
+          <option value="created-descending">{{ 'collections.sorting.date_descending' | t }}</option>
+          <option value="created-ascending">{{ 'collections.sorting.date_ascending' | t }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8" id="product-grid">
+      {%- for product in collection.products -%}
+        <div class="animate-fade-in-up" style="animation-delay: {{ forloop.index | modulo: 8 | times: 50 }}ms;">
+          {%- render 'product-card', product: product, show_vendor: true -%}
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <!-- Pagination -->
+    {%- if paginate.pages > 1 -%}
+      {%- paginate collection.products by 12 -%}
+        <nav class="mt-16 flex justify-center" aria-label="{{ 'general.pagination.label' | t }}">
+          <ul class="flex gap-2">
+            {%- if paginate.previous -%}
+              <li>
+                <a href="{{ paginate.previous.url }}" class="btn btn-secondary">
+                  {{ 'general.pagination.previous' | t }}
+                </a>
+              </li>
+            {%- endif -%}
+
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <li>
+                  <a href="{{ part.url }}" class="btn btn-secondary">
+                    {{ part.title }}
+                  </a>
+                </li>
+              {%- else -%}
+                {%- if part.title == paginate.current_page -%}
+                  <li>
+                    <span class="btn btn-primary" aria-current="page">
+                      {{ part.title }}
+                    </span>
+                  </li>
+                {%- else -%}
+                  <li>
+                    <span class="btn btn-secondary opacity-50">
+                      {{ part.title }}
+                    </span>
+                  </li>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- if paginate.next -%}
+              <li>
+                <a href="{{ paginate.next.url }}" class="btn btn-secondary">
+                  {{ 'general.pagination.next' | t }}
+                </a>
+              </li>
+            {%- endif -%}
+          </ul>
+        </nav>
+      {%- endpaginate -%}
+    {%- endif -%}
+
+  {%- else -%}
+    <!-- Empty State -->
+    <div class="text-center py-16">
+      <p class="text-xl text-text-secondary mb-6">{{ 'collections.general.no_products' | t }}</p>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary">
+        {{ 'collections.general.browse_all' | t }}
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+
+<script>
+  // Sort functionality
+  const sortSelect = document.getElementById('SortBy');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function() {
+      const url = new URL(window.location.href);
+      url.searchParams.set('sort_by', this.value);
+      window.location.href = url.toString();
+    });
+    
+    // Set current sort value
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentSort = urlParams.get('sort_by');
+    if (currentSort) {
+      sortSelect.value = currentSort;
+    }
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": []
+}
+{% endschema %}
+

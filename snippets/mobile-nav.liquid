@@ -1,0 +1,50 @@
+<ul class="space-y-4">
+  {%- for link in linklists.main-menu.links -%}
+    <li>
+      <a 
+        href="{{ link.url }}" 
+        class="text-lg text-text-primary hover:text-accent transition-colors duration-300 block {% if link.active %}text-accent font-semibold{% endif %}"
+        {% if link.current %}aria-current="page"{% endif %}
+      >
+        {{ link.title }}
+      </a>
+      
+      {%- if link.links.size > 0 -%}
+        <ul class="mt-3 ml-4 space-y-3 border-l-2 border-border pl-4">
+          {%- for child_link in link.links -%}
+            <li>
+              <a 
+                href="{{ child_link.url }}" 
+                class="text-text-secondary hover:text-accent transition-colors duration-300 block"
+                {% if child_link.current %}aria-current="page"{% endif %}
+              >
+                {{ child_link.title }}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </li>
+  {%- endfor -%}
+</ul>
+
+{%- if shop.customer_accounts_enabled -%}
+  <div class="mt-8 pt-8 border-t border-border">
+    {%- if customer -%}
+      <a href="{{ routes.account_url }}" class="btn btn-secondary w-full mb-3">
+        {{ 'customer.account.title' | t }}
+      </a>
+      <a href="{{ routes.account_logout_url }}" class="btn btn-outline w-full">
+        {{ 'customer.log_out' | t }}
+      </a>
+    {%- else -%}
+      <a href="{{ routes.account_login_url }}" class="btn btn-primary w-full mb-3">
+        {{ 'customer.login.title' | t }}
+      </a>
+      <a href="{{ routes.account_register_url }}" class="btn btn-outline w-full">
+        {{ 'customer.register.title' | t }}
+      </a>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
