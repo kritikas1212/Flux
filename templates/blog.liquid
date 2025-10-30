@@ -1,0 +1,141 @@
+{%- render 'breadcrumbs' -%}
+
+<div class="container-flux py-12">
+  
+  <!-- Blog Header -->
+  <div class="text-center mb-12">
+    <h1 class="text-4xl md:text-6xl font-bold mb-4">{{ blog.title }}</h1>
+    
+    {%- if blog.description != blank -%}
+      <div class="prose prose-invert max-w-2xl mx-auto text-text-secondary">
+        {{ blog.description }}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- paginate blog.articles by 12 -%}
+    {%- if blog.articles.size > 0 -%}
+      <!-- Articles Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        {%- for article in blog.articles -%}
+          <article class="card group" aria-labelledby="article-{{ article.id }}">
+            {%- if article.image -%}
+              <a href="{{ article.url }}" class="block mb-4 overflow-hidden rounded-xl">
+                <img
+                  srcset="
+                    {%- if article.image.width >= 360 -%}{{ article.image | image_url: width: 360 }} 360w,{%- endif -%}
+                    {%- if article.image.width >= 533 -%}{{ article.image | image_url: width: 533 }} 533w,{%- endif -%}
+                    {%- if article.image.width >= 720 -%}{{ article.image | image_url: width: 720 }} 720w,{%- endif -%}
+                    {{ article.image | image_url }} {{ article.image.width }}w
+                  "
+                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                  src="{{ article.image | image_url: width: 720 }}"
+                  alt="{{ article.image.alt | escape }}"
+                  loading="lazy"
+                  width="{{ article.image.width }}"
+                  height="{{ article.image.height }}"
+                  class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
+                >
+              </a>
+            {%- endif -%}
+
+            <div class="space-y-3">
+              {%- if article.tags.size > 0 -%}
+                <div class="flex flex-wrap gap-2">
+                  {%- for tag in article.tags limit: 3 -%}
+                    <span class="text-xs px-3 py-1 bg-bg-primary rounded-lg text-accent">
+                      {{ tag }}
+                    </span>
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
+
+              <h2 id="article-{{ article.id }}" class="text-xl font-bold">
+                <a href="{{ article.url }}" class="hover:text-accent transition-colors duration-300">
+                  {{ article.title }}
+                </a>
+              </h2>
+
+              {%- if article.excerpt != blank -%}
+                <p class="text-text-secondary line-clamp-3">
+                  {{ article.excerpt | strip_html }}
+                </p>
+              {%- endif -%}
+
+              <div class="flex items-center gap-4 text-sm text-text-secondary">
+                <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                  {{ article.published_at | date: format: 'month_day_year' }}
+                </time>
+                {%- if article.comments_count > 0 -%}
+                  <span>{{ article.comments_count }} {{ 'blogs.comments.comments_with_count' | t: count: article.comments_count }}</span>
+                {%- endif -%}
+              </div>
+
+              <a href="{{ article.url }}" class="inline-flex items-center text-accent hover:underline">
+                {{ 'blogs.article.read_more' | t }}
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+          </article>
+        {%- endfor -%}
+      </div>
+
+      <!-- Pagination -->
+      {%- if paginate.pages > 1 -%}
+        <nav class="flex justify-center" aria-label="{{ 'general.pagination.label' | t }}">
+          <ul class="flex gap-2">
+            {%- if paginate.previous -%}
+              <li>
+                <a href="{{ paginate.previous.url }}" class="btn btn-secondary">
+                  {{ 'general.pagination.previous' | t }}
+                </a>
+              </li>
+            {%- endif -%}
+
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <li>
+                  <a href="{{ part.url }}" class="btn btn-secondary">
+                    {{ part.title }}
+                  </a>
+                </li>
+              {%- else -%}
+                {%- if part.title == paginate.current_page -%}
+                  <li>
+                    <span class="btn btn-primary" aria-current="page">
+                      {{ part.title }}
+                    </span>
+                  </li>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- if paginate.next -%}
+              <li>
+                <a href="{{ paginate.next.url }}" class="btn btn-secondary">
+                  {{ 'general.pagination.next' | t }}
+                </a>
+              </li>
+            {%- endif -%}
+          </ul>
+        </nav>
+      {%- endif -%}
+
+    {%- else -%}
+      <!-- Empty State -->
+      <div class="text-center py-16">
+        <p class="text-xl text-text-secondary">{{ 'blogs.general.no_articles' | t }}</p>
+      </div>
+    {%- endif -%}
+  {%- endpaginate -%}
+</div>
+
+{% schema %}
+{
+  "name": "Blog",
+  "settings": []
+}
+{% endschema %}
+

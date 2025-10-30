@@ -1,5 +1,9 @@
 {
   "general": {
+    "breadcrumbs": {
+      "label": "Breadcrumb",
+      "home": "Home"
+    },
     "accessibility": {
       "skip_to_content": "Skip to content",
       "refresh_page": "Choosing a selection results in a full page refresh.",
@@ -36,6 +40,7 @@
     },
     "social": {
       "share": "Share",
+      "follow_us": "Follow us",
       "share_on_facebook": "Share on Facebook",
       "share_on_twitter": "Share on Twitter",
       "share_on_pinterest": "Share on Pinterest"
@@ -53,6 +58,9 @@
     },
     "featured_collection": {
       "no_products": "No products in this collection"
+    },
+    "video": {
+      "no_video": "No video added"
     }
   },
   "products": {
@@ -157,6 +165,31 @@
       "subtotal": "Subtotal"
     },
     "log_out": "Log out"
+  },
+  "blogs": {
+    "general": {
+      "no_articles": "No blog posts yet"
+    },
+    "article": {
+      "by_author": "by {{ author }}",
+      "read_more": "Read more",
+      "related_posts": "Related Posts"
+    },
+    "comments": {
+      "title": "Comments",
+      "comments_with_count": {
+        "one": "{{ count }} comment",
+        "other": "{{ count }} comments"
+      },
+      "form_title": "Leave a comment",
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "post": "Post Comment",
+      "success": "Your comment was posted successfully! Thank you!",
+      "success_moderated": "Your comment was posted successfully. We will publish it in a little while, as our blog is moderated.",
+      "error": "Please check that all fields are completed correctly."
+    }
   }
 }
 

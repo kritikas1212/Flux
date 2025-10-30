@@ -1,0 +1,153 @@
+<section class="section-spacing" data-section-id="{{ section.id }}" data-section-type="collage">
+  <div class="container-flux">
+    
+    {%- if section.settings.heading != blank -%}
+      <div class="text-center mb-12">
+        <h2 class="mb-4">
+          {%- if section.settings.heading_gradient -%}
+            <span class="gradient-text">{{ section.settings.heading }}</span>
+          {%- else -%}
+            {{ section.settings.heading }}
+          {%- endif -%}
+        </h2>
+      </div>
+    {%- endif -%}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      {%- for block in section.blocks -%}
+        <div 
+          class="relative overflow-hidden rounded-2xl group {% if block.settings.featured %}md:col-span-2 md:row-span-2{% endif %} animate-fade-in-up" 
+          style="animation-delay: {{ forloop.index | times: 50 }}ms;"
+          {{ block.shopify_attributes }}
+        >
+          {%- if block.settings.image != blank -%}
+            {%- liquid
+              assign image_height = block.settings.image.width | divided_by: block.settings.image.aspect_ratio | round
+              if block.settings.featured
+                assign image_height = 600
+              else
+                assign image_height = 400
+              endif
+            -%}
+            
+            <a href="{{ block.settings.link }}" class="block relative" style="padding-bottom: {% if block.settings.featured %}75%{% else %}100%{% endif %};">
+              <img
+                srcset="
+                  {%- if block.settings.image.width >= 375 -%}{{ block.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
+                  {%- if block.settings.image.width >= 550 -%}{{ block.settings.image | image_url: width: 550 }} 550w,{%- endif -%}
+                  {%- if block.settings.image.width >= 750 -%}{{ block.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
+                  {%- if block.settings.image.width >= 1100 -%}{{ block.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
+                  {{ block.settings.image | image_url }} {{ block.settings.image.width }}w
+                "
+                sizes="(min-width: 990px) {% if block.settings.featured %}66vw{% else %}33vw{% endif %}, (min-width: 750px) 50vw, 100vw"
+                src="{{ block.settings.image | image_url: width: 1100 }}"
+                alt="{{ block.settings.image.alt | escape }}"
+                loading="lazy"
+                width="{{ block.settings.image.width }}"
+                height="{{ image_height }}"
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              >
+              
+              {%- if block.settings.heading != blank or block.settings.text != blank -%}
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6 md:p-8">
+                  <div class="text-white">
+                    {%- if block.settings.heading != blank -%}
+                      <h3 class="text-2xl md:text-3xl font-bold mb-2">{{ block.settings.heading }}</h3>
+                    {%- endif -%}
+                    {%- if block.settings.text != blank -%}
+                      <p class="text-white/90">{{ block.settings.text }}</p>
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- endif -%}
+            </a>
+          {%- else -%}
+            <div class="aspect-square bg-bg-secondary rounded-2xl flex items-center justify-center">
+              {{ 'image' | placeholder_svg_tag: 'w-full h-full opacity-20' }}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collage",
+  "tag": "section",
+  "class": "collage-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_gradient",
+      "label": "Use gradient for heading",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Featured image",
+          "info": "Make this image larger",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collage",
+      "blocks": [
+        {
+          "type": "image",
+          "settings": {
+            "featured": true
+          }
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6
+}
+{% endschema %}
+

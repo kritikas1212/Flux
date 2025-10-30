@@ -1,0 +1,124 @@
+<section class="section-spacing" data-section-id="{{ section.id }}" data-section-type="newsletter">
+  <div class="container-flux">
+    <div class="max-w-2xl mx-auto text-center">
+      
+      {%- if section.settings.heading != blank -%}
+        <h2 class="mb-4">
+          {%- if section.settings.heading_gradient -%}
+            <span class="gradient-text">{{ section.settings.heading }}</span>
+          {%- else -%}
+            {{ section.settings.heading }}
+          {%- endif -%}
+        </h2>
+      {%- endif -%}
+
+      {%- if section.settings.subheading != blank -%}
+        <p class="text-text-secondary text-lg mb-8">
+          {{ section.settings.subheading }}
+        </p>
+      {%- endif -%}
+
+      {%- form 'customer', id: 'newsletter-form', class: 'max-w-md mx-auto' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input
+            type="email"
+            name="contact[email]"
+            id="NewsletterEmail-{{ section.id }}"
+            placeholder="{{ 'general.newsletter.email_placeholder' | t }}"
+            class="input flex-1"
+            aria-label="{{ 'general.newsletter.email_placeholder' | t }}"
+            required
+            autocomplete="email"
+          >
+          
+          <button type="submit" class="btn btn-primary whitespace-nowrap">
+            {{ section.settings.button_text }}
+          </button>
+        </div>
+
+        {%- if form.posted_successfully? -%}
+          <div class="mt-4 p-4 bg-green-500 bg-opacity-10 border border-green-500 rounded-xl" role="status">
+            <p class="text-green-400 text-sm">{{ 'general.newsletter.success' | t }}</p>
+          </div>
+        {%- endif -%}
+        
+        {%- if form.errors -%}
+          <div class="mt-4 p-4 bg-red-500 bg-opacity-10 border border-red-500 rounded-xl" role="alert">
+            <p class="text-red-400 text-sm">{{ form.errors | default_errors }}</p>
+          </div>
+        {%- endif -%}
+      {%- endform -%}
+
+      {%- if section.settings.show_social -%}
+        <div class="flex justify-center items-center gap-4 mt-8 pt-8 border-t border-border">
+          <span class="text-sm text-text-secondary">{{ 'general.social.follow_us' | t }}</span>
+          <div class="flex gap-2">
+            {%- if settings.social_facebook_link != blank -%}
+              <a href="{{ settings.social_facebook_link }}" class="w-10 h-10 flex items-center justify-center rounded-lg border border-border hover:border-accent hover:text-accent transition-colors duration-300" target="_blank" rel="noopener" aria-label="Facebook">
+                {%- render 'icon-facebook' -%}
+              </a>
+            {%- endif -%}
+            {%- if settings.social_instagram_link != blank -%}
+              <a href="{{ settings.social_instagram_link }}" class="w-10 h-10 flex items-center justify-center rounded-lg border border-border hover:border-accent hover:text-accent transition-colors duration-300" target="_blank" rel="noopener" aria-label="Instagram">
+                {%- render 'icon-instagram' -%}
+              </a>
+            {%- endif -%}
+            {%- if settings.social_twitter_link != blank -%}
+              <a href="{{ settings.social_twitter_link }}" class="w-10 h-10 flex items-center justify-center rounded-lg border border-border hover:border-accent hover:text-accent transition-colors duration-300" target="_blank" rel="noopener" aria-label="Twitter">
+                {%- render 'icon-twitter' -%}
+              </a>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "tag": "section",
+  "class": "newsletter-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Join Our Newsletter"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_gradient",
+      "label": "Use gradient for heading",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Subscribe"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "label": "Show social media links",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter"
+    }
+  ]
+}
+{% endschema %}
+

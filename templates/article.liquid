@@ -1,0 +1,254 @@
+{%- render 'breadcrumbs' -%}
+
+<article class="container-flux py-12" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Article Header -->
+    <header class="text-center mb-12">
+      <h1 class="text-4xl md:text-6xl font-bold mb-6" itemprop="headline">
+        {{ article.title }}
+      </h1>
+
+      <div class="flex flex-wrap justify-center items-center gap-4 text-text-secondary">
+        {%- if article.author != blank -%}
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            {{ 'blogs.article.by_author' | t: author: article.author }}
+          </span>
+        {%- endif -%}
+        
+        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}" itemprop="datePublished dateCreated">
+          {{ article.published_at | date: format: 'month_day_year' }}
+        </time>
+
+        {%- if article.comments_count > 0 and blog.comments_enabled? -%}
+          <a href="#comments" class="hover:text-accent transition-colors duration-300">
+            {{ article.comments_count }} {{ 'blogs.comments.comments_with_count' | t: count: article.comments_count }}
+          </a>
+        {%- endif -%}
+      </div>
+
+      {%- if article.tags.size > 0 -%}
+        <div class="flex flex-wrap justify-center gap-2 mt-6">
+          {%- for tag in article.tags -%}
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="text-xs px-3 py-1 bg-bg-secondary border border-border rounded-lg hover:border-accent transition-colors duration-300">
+              {{ tag }}
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </header>
+
+    <!-- Featured Image -->
+    {%- if article.image -%}
+      <div class="mb-12 rounded-2xl overflow-hidden">
+        <img
+          srcset="
+            {%- if article.image.width >= 375 -%}{{ article.image | image_url: width: 375 }} 375w,{%- endif -%}
+            {%- if article.image.width >= 750 -%}{{ article.image | image_url: width: 750 }} 750w,{%- endif -%}
+            {%- if article.image.width >= 1100 -%}{{ article.image | image_url: width: 1100 }} 1100w,{%- endif -%}
+            {%- if article.image.width >= 1500 -%}{{ article.image | image_url: width: 1500 }} 1500w,{%- endif -%}
+            {{ article.image | image_url }} {{ article.image.width }}w
+          "
+          sizes="(min-width: 1100px) 1100px, 100vw"
+          src="{{ article.image | image_url: width: 1500 }}"
+          alt="{{ article.image.alt | escape }}"
+          loading="eager"
+          width="{{ article.image.width }}"
+          height="{{ article.image.height }}"
+          itemprop="image"
+          class="w-full h-auto"
+        >
+      </div>
+    {%- endif -%}
+
+    <!-- Article Content -->
+    <div class="prose prose-invert prose-lg max-w-none mb-12" itemprop="articleBody">
+      {{ article.content }}
+    </div>
+
+    <!-- Social Share -->
+    {%- render 'social-share', share_title: article.title, share_permalink: article.url, share_image: article.image -%}
+
+    <!-- Comments -->
+    {%- if blog.comments_enabled? -%}
+      <div id="comments" class="mt-16 pt-16 border-t border-border">
+        <h2 class="text-3xl font-bold mb-8">
+          {{ 'blogs.comments.title' | t }}
+        </h2>
+
+        {%- if article.comments_count > 0 -%}
+          <div class="space-y-8 mb-12">
+            {%- paginate article.comments by 20 -%}
+              {%- for comment in article.comments -%}
+                <div class="card" id="comment-{{ comment.id }}">
+                  <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 w-12 h-12 rounded-full bg-bg-primary flex items-center justify-center font-bold text-accent">
+                      {{ comment.author | slice: 0 }}
+                    </div>
+                    
+                    <div class="flex-1">
+                      <div class="flex items-center gap-2 mb-2">
+                        <p class="font-semibold">{{ comment.author }}</p>
+                        <time datetime="{{ comment.created_at | date: '%Y-%m-%d' }}" class="text-sm text-text-secondary">
+                          {{ comment.created_at | date: format: 'month_day_year' }}
+                        </time>
+                      </div>
+                      
+                      <div class="text-text-secondary">
+                        {{ comment.content }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {%- endfor -%}
+
+              {%- if paginate.pages > 1 -%}
+                <nav class="flex justify-center mt-8">
+                  {%- if paginate.previous -%}
+                    <a href="{{ paginate.previous.url }}" class="btn btn-secondary mr-2">
+                      {{ 'general.pagination.previous' | t }}
+                    </a>
+                  {%- endif -%}
+                  {%- if paginate.next -%}
+                    <a href="{{ paginate.next.url }}" class="btn btn-secondary">
+                      {{ 'general.pagination.next' | t }}
+                    </a>
+                  {%- endif -%}
+                </nav>
+              {%- endif -%}
+            {%- endpaginate -%}
+          </div>
+        {%- endif -%}
+
+        <!-- Comment Form -->
+        <div class="card">
+          <h3 class="text-2xl font-bold mb-6">{{ 'blogs.comments.form_title' | t }}</h3>
+          
+          {%- form 'new_comment', article -%}
+            {%- if form.posted_successfully? -%}
+              <div class="mb-6 p-4 bg-green-500 bg-opacity-10 border border-green-500 rounded-xl" role="status">
+                <p class="text-green-400">
+                  {%- if blog.moderated? -%}
+                    {{ 'blogs.comments.success_moderated' | t }}
+                  {%- else -%}
+                    {{ 'blogs.comments.success' | t }}
+                  {%- endif -%}
+                </p>
+              </div>
+            {%- endif -%}
+
+            {%- if form.errors -%}
+              <div class="mb-6 p-4 bg-red-500 bg-opacity-10 border border-red-500 rounded-xl" role="alert">
+                <p class="text-red-400 font-semibold mb-2">{{ 'blogs.comments.error' | t }}</p>
+                <ul class="text-red-400 text-sm space-y-1">
+                  {%- for field in form.errors -%}
+                    <li>{{ field | capitalize }} {{ form.errors.messages[field] }}</li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            {%- endif -%}
+
+            <div class="space-y-4">
+              <div>
+                <label for="CommentAuthor" class="block text-sm font-semibold mb-2">
+                  {{ 'blogs.comments.name' | t }} <span class="text-red-500" aria-label="required">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="comment[author]"
+                  id="CommentAuthor"
+                  class="input"
+                  value="{{ form.author }}"
+                  required
+                  autocomplete="name"
+                >
+              </div>
+
+              <div>
+                <label for="CommentEmail" class="block text-sm font-semibold mb-2">
+                  {{ 'blogs.comments.email' | t }} <span class="text-red-500" aria-label="required">*</span>
+                </label>
+                <input
+                  type="email"
+                  name="comment[email]"
+                  id="CommentEmail"
+                  class="input"
+                  value="{{ form.email }}"
+                  required
+                  autocomplete="email"
+                >
+              </div>
+
+              <div>
+                <label for="CommentBody" class="block text-sm font-semibold mb-2">
+                  {{ 'blogs.comments.message' | t }} <span class="text-red-500" aria-label="required">*</span>
+                </label>
+                <textarea
+                  name="comment[body]"
+                  id="CommentBody"
+                  class="input min-h-[150px]"
+                  required
+                >{{ form.body }}</textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary">
+                {{ 'blogs.comments.post' | t }}
+              </button>
+            </div>
+          {%- endform -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</article>
+
+<!-- Related Articles -->
+{%- if blog.articles.size > 1 -%}
+  <div class="container-flux pb-16">
+    <h2 class="text-3xl font-bold mb-8 text-center">{{ 'blogs.article.related_posts' | t }}</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      {%- for related_article in blog.articles limit: 3 -%}
+        {%- unless related_article.id == article.id -%}
+          <article class="card group">
+            {%- if related_article.image -%}
+              <a href="{{ related_article.url }}" class="block mb-4 overflow-hidden rounded-xl">
+                <img
+                  src="{{ related_article.image | image_url: width: 400 }}"
+                  alt="{{ related_article.image.alt | escape }}"
+                  loading="lazy"
+                  class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
+                >
+              </a>
+            {%- endif -%}
+
+            <h3 class="text-lg font-bold mb-2">
+              <a href="{{ related_article.url }}" class="hover:text-accent transition-colors duration-300">
+                {{ related_article.title }}
+              </a>
+            </h3>
+
+            <time datetime="{{ related_article.published_at | date: '%Y-%m-d' }}" class="text-sm text-text-secondary">
+              {{ related_article.published_at | date: format: 'month_day_year' }}
+            </time>
+          </article>
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+<meta itemprop="dateModified" content="{{ article.updated_at | date: '%Y-%m-%d' }}">
+<meta itemprop="mainEntityOfPage" content="{{ article.url }}">
+<div itemprop="publisher" itemscope itemtype="http://schema.org/Organization" style="display: none;">
+  <meta itemprop="name" content="{{ shop.name }}">
+  <link itemprop="url" href="{{ shop.url }}">
+</div>
+
+{% schema %}
+{
+  "name": "Article",
+  "settings": []
+}
+{% endschema %}
+
