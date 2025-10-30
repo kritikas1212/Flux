@@ -2,18 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CSS Custom Properties for Flux Theme */
+/* CSS Custom Properties for Flux Adaptive Design System */
 :root {
-  --color-bg-primary: #0A0D14;
-  --color-bg-secondary: #111827;
+  /* Core Colors - Updated Design System */
+  --color-primary: #0C1021;
+  --color-secondary: #171C2A;
+  --color-accent: #7F5AF0;
+  --color-accent-light: #9E8CFC;
+  --color-accent-dark: #5E3BC1;
+  --color-gradient1: #1E1F2A;
+  --color-gradient2: #181B33;
+  --color-surface: #FFFFFF;
+  --color-muted: #A1A1AA;
+  
+  /* Legacy Support */
+  --color-bg-primary: #0C1021;
+  --color-bg-secondary: #171C2A;
   --color-text-primary: #E5E7EB;
-  --color-text-secondary: #9CA3AF;
-  --color-accent: #3B82F6;
-  --color-gradient-start: #6EE7B7;
-  --color-gradient-end: #3B82F6;
-  --color-border: #1F2937;
-  --font-heading: 'DM Sans', sans-serif;
+  --color-text-secondary: #A1A1AA;
+  --color-gradient-start: #7F5AF0;
+  --color-gradient-end: #2CB67D;
+  --color-border: #2D3748;
+  
+  /* Typography */
+  --font-heading: 'DM Sans', 'Satoshi', sans-serif;
   --font-body: 'Inter', sans-serif;
+  
+  /* Spacing & Layout */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 4rem;
+  
+  /* Shadows */
+  --shadow-glow: 0 0 30px rgba(127, 90, 240, 0.3);
+  --shadow-glow-lg: 0 0 60px rgba(127, 90, 240, 0.4);
+  
+  /* Border Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
 }
 
 /* Base Layer Customizations */

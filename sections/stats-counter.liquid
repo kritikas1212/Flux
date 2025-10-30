@@ -1,0 +1,215 @@
+{% comment %}
+  Animated Stats Counter Section
+  Perfect for showcasing achievements, metrics, or social proof
+{% endcomment %}
+
+<section class="section-spacing bg-gradient-to-br from-secondary via-gradient1 to-primary relative overflow-hidden" data-section-id="{{ section.id }}" data-section-type="stats-counter">
+  
+  <!-- Background Pattern -->
+  <div class="absolute inset-0 opacity-5">
+    <div class="absolute inset-0" style="background-image: radial-gradient(circle, #7F5AF0 1px, transparent 1px); background-size: 40px 40px;"></div>
+  </div>
+
+  <div class="container-flux relative z-10">
+    
+    {%- if section.settings.heading != blank -%}
+      <div class="text-center mb-16">
+        <h2 class="mb-4">
+          <span class="bg-flux-gradient bg-clip-text text-transparent">
+            {{ section.settings.heading }}
+          </span>
+        </h2>
+        
+        {%- if section.settings.subheading != blank -%}
+          <p class="text-muted text-lg max-w-2xl mx-auto">
+            {{ section.settings.subheading }}
+          </p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="grid grid-cols-2 md:grid-cols-{{ section.blocks.size }} gap-8 md:gap-12">
+      {%- for block in section.blocks -%}
+        <div 
+          class="text-center group animate-fade-in-up" 
+          style="animation-delay: {{ forloop.index | times: 150 }}ms;"
+          {{ block.shopify_attributes }}
+        >
+          <div class="relative inline-block mb-4">
+            {%- if block.settings.icon_svg != blank -%}
+              <div class="w-16 h-16 mx-auto mb-4 text-accent group-hover:scale-110 transition-transform duration-300">
+                {{ block.settings.icon_svg }}
+              </div>
+            {%- endif -%}
+          </div>
+
+          <div class="mb-3">
+            <span 
+              class="text-5xl md:text-6xl font-bold bg-flux-gradient bg-clip-text text-transparent"
+              data-counter-target="{{ block.settings.number }}"
+              data-counter-suffix="{{ block.settings.suffix }}"
+              data-counter-prefix="{{ block.settings.prefix }}"
+            >
+              {{ block.settings.prefix }}0{{ block.settings.suffix }}
+            </span>
+          </div>
+
+          <h3 class="text-xl font-semibold mb-2">{{ block.settings.title }}</h3>
+          
+          {%- if block.settings.description != blank -%}
+            <p class="text-muted text-sm">{{ block.settings.description }}</p>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    const counters = document.querySelectorAll('[data-counter-target]');
+    
+    const animateCounter = (counter) => {
+      const target = parseInt(counter.dataset.counterTarget);
+      const prefix = counter.dataset.counterPrefix || '';
+      const suffix = counter.dataset.counterSuffix || '';
+      const duration = 2000; // 2 seconds
+      const steps = 60;
+      const increment = target / steps;
+      let current = 0;
+
+      const updateCounter = () => {
+        current += increment;
+        if (current < target) {
+          counter.textContent = prefix + Math.floor(current) + suffix;
+          requestAnimationFrame(updateCounter);
+        } else {
+          counter.textContent = prefix + target + suffix;
+        }
+      };
+
+      updateCounter();
+    };
+
+    // Intersection Observer for animation trigger
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    counters.forEach(counter => observer.observe(counter));
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Stats Counter",
+  "tag": "section",
+  "class": "stats-section",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Trusted By Thousands"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Join our growing community of satisfied customers"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat_item",
+      "name": "Stat Item",
+      "settings": [
+        {
+          "type": "html",
+          "id": "icon_svg",
+          "label": "Icon SVG",
+          "info": "Paste SVG code for icon"
+        },
+        {
+          "type": "text",
+          "id": "prefix",
+          "label": "Number prefix",
+          "info": "e.g., $, #",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Number",
+          "default": "1000"
+        },
+        {
+          "type": "text",
+          "id": "suffix",
+          "label": "Number suffix",
+          "info": "e.g., +, K, M",
+          "default": "+"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Happy Customers"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "And counting"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stats Counter",
+      "blocks": [
+        {
+          "type": "stat_item",
+          "settings": {
+            "number": "10000",
+            "suffix": "+",
+            "title": "Happy Customers"
+          }
+        },
+        {
+          "type": "stat_item",
+          "settings": {
+            "number": "50000",
+            "suffix": "+",
+            "title": "Products Sold"
+          }
+        },
+        {
+          "type": "stat_item",
+          "settings": {
+            "number": "99",
+            "suffix": "%",
+            "title": "Satisfaction Rate"
+          }
+        },
+        {
+          "type": "stat_item",
+          "settings": {
+            "number": "24",
+            "suffix": "/7",
+            "title": "Support Available"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

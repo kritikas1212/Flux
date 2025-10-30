@@ -1,0 +1,188 @@
+{% comment %}
+  Collection Slider - Horizontal scrolling collection showcase
+  Smooth, modern product slider with navigation
+{% endcomment %}
+
+<section class="section-spacing" data-section-id="{{ section.id }}" data-section-type="collection-slider">
+  <div class="container-flux">
+    
+    {%- if section.settings.heading != blank -%}
+      <div class="flex items-center justify-between mb-12">
+        <div class="flex-1">
+          <h2 class="mb-2">
+            <span class="bg-flux-gradient bg-clip-text text-transparent">
+              {{ section.settings.heading }}
+            </span>
+          </h2>
+          {%- if section.settings.subheading != blank -%}
+            <p class="text-muted">{{ section.settings.subheading }}</p>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.show_view_all -%}
+          <a href="{{ section.settings.collection.url }}" class="btn btn-outline hidden md:inline-flex">
+            {{ 'sections.collection_slider.view_all' | t }}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- liquid
+      assign collection = collections[section.settings.collection]
+      assign products_to_show = section.settings.products_to_show | default: 8
+    -%}
+
+    {%- if collection != blank and collection.products_count > 0 -%}
+      <div class="relative">
+        <!-- Slider Container -->
+        <div 
+          class="overflow-x-auto scrollbar-hide -mx-4 px-4 snap-x snap-mandatory"
+          data-collection-slider
+          style="scroll-behavior: smooth;"
+        >
+          <div class="flex gap-6" style="width: max-content;">
+            {%- for product in collection.products limit: products_to_show -%}
+              <div class="w-72 flex-shrink-0 snap-start">
+                {%- render 'product-card', product: product, show_vendor: section.settings.show_vendor -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="hidden md:flex items-center justify-end gap-4 mt-8">
+          <button
+            type="button"
+            class="w-12 h-12 rounded-full bg-secondary border border-border hover:border-accent flex items-center justify-center transition-colors duration-300"
+            data-slider-prev
+            aria-label="Previous"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+          
+          <button
+            type="button"
+            class="w-12 h-12 rounded-full bg-secondary border border-border hover:border-accent flex items-center justify-center transition-colors duration-300"
+            data-slider-next
+            aria-label="Next"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {%- if section.settings.show_view_all -%}
+        <div class="text-center mt-8 md:hidden">
+          <a href="{{ collection.url }}" class="btn btn-outline">
+            {{ 'sections.collection_slider.view_all' | t }}
+          </a>
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <div class="text-center py-12 bg-secondary rounded-2xl border border-border">
+        <p class="text-muted">{{ 'sections.featured_collection.no_products' | t }}</p>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>
+
+<script>
+  (function() {
+    const slider = document.querySelector('[data-collection-slider]');
+    const prevBtn = document.querySelector('[data-slider-prev]');
+    const nextBtn = document.querySelector('[data-slider-next]');
+
+    if (!slider || !prevBtn || !nextBtn) return;
+
+    const cardWidth = 288 + 24; // card width + gap
+
+    prevBtn.addEventListener('click', () => {
+      slider.scrollBy({ left: -cardWidth * 2, behavior: 'smooth' });
+    });
+
+    nextBtn.addEventListener('click', () => {
+      slider.scrollBy({ left: cardWidth * 2, behavior: 'smooth' });
+    });
+
+    // Update button states
+    const updateButtons = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = slider;
+      prevBtn.disabled = scrollLeft <= 0;
+      nextBtn.disabled = scrollLeft + clientWidth >= scrollWidth - 10;
+      
+      prevBtn.style.opacity = prevBtn.disabled ? '0.5' : '1';
+      nextBtn.style.opacity = nextBtn.disabled ? '0.5' : '1';
+    };
+
+    slider.addEventListener('scroll', updateButtons);
+    updateButtons();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Collection Slider",
+  "tag": "section",
+  "class": "collection-slider-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Trending Now"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Discover our most popular products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "label": "Products to show",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'View All' button",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Slider"
+    }
+  ]
+}
+{% endschema %}
+

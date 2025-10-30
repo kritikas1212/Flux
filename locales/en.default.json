@@ -61,6 +61,18 @@
     },
     "video": {
       "no_video": "No video added"
+    },
+    "countdown": {
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Minutes",
+      "seconds": "Seconds"
+    },
+    "collection_slider": {
+      "view_all": "View All"
+    },
+    "pricing": {
+      "popular": "Most Popular"
     }
   },
   "products": {

@@ -1,0 +1,241 @@
+{% comment %}
+  Pricing Table Section
+  Flexible pricing display with featured plans
+{% endcomment %}
+
+<section class="section-spacing" data-section-id="{{ section.id }}" data-section-type="pricing-table">
+  <div class="container-flux">
+    
+    {%- if section.settings.heading != blank -%}
+      <div class="text-center mb-16">
+        <h2 class="mb-4">
+          <span class="bg-flux-gradient bg-clip-text text-transparent">
+            {{ section.settings.heading }}
+          </span>
+        </h2>
+        
+        {%- if section.settings.subheading != blank -%}
+          <p class="text-muted text-lg max-w-2xl mx-auto">
+            {{ section.settings.subheading }}
+          </p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="grid grid-cols-1 md:grid-cols-{{ section.blocks.size | at_most: 3 }} gap-8 max-w-6xl mx-auto">
+      {%- for block in section.blocks -%}
+        <div 
+          class="relative rounded-2xl p-8 border transition-all duration-300 hover:scale-105 {% if block.settings.featured %}border-accent shadow-glow bg-gradient-to-br from-secondary to-gradient1 {% else %}border-border bg-secondary {% endif %}"
+          {{ block.shopify_attributes }}
+        >
+          {%- if block.settings.featured -%}
+            <div class="absolute -top-4 left-1/2 -translate-x-1/2">
+              <span class="px-4 py-1 bg-flux-gradient text-white text-sm font-semibold rounded-full">
+                {{ 'sections.pricing.popular' | t }}
+              </span>
+            </div>
+          {%- endif -%}
+
+          <!-- Plan Name -->
+          <h3 class="text-2xl font-bold mb-2 {% if block.settings.featured %}text-accent-light{% endif %}">
+            {{ block.settings.plan_name }}
+          </h3>
+
+          {%- if block.settings.plan_description != blank -%}
+            <p class="text-muted text-sm mb-6">{{ block.settings.plan_description }}</p>
+          {%- endif -%}
+
+          <!-- Price -->
+          <div class="mb-8">
+            <div class="flex items-baseline gap-2">
+              <span class="text-5xl font-bold bg-flux-gradient bg-clip-text text-transparent">
+                {{ block.settings.currency_symbol }}{{ block.settings.price }}
+              </span>
+              {%- if block.settings.billing_period != blank -%}
+                <span class="text-muted">/ {{ block.settings.billing_period }}</span>
+              {%- endif -%}
+            </div>
+            
+            {%- if block.settings.price_note != blank -%}
+              <p class="text-muted text-sm mt-2">{{ block.settings.price_note }}</p>
+            {%- endif -%}
+          </div>
+
+          <!-- Features -->
+          {%- if block.settings.features != blank -%}
+            <ul class="space-y-4 mb-8">
+              {%- assign features = block.settings.features | split: '|' -%}
+              {%- for feature in features -%}
+                <li class="flex items-start gap-3">
+                  <svg class="w-5 h-5 text-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span class="text-sm">{{ feature }}</span>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+
+          <!-- CTA Button -->
+          <a 
+            href="{{ block.settings.button_link }}" 
+            class="btn w-full text-center {% if block.settings.featured %}btn-primary{% else %}btn-outline{% endif %}"
+          >
+            {{ block.settings.button_text }}
+          </a>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.show_comparison_link -%}
+      <div class="text-center mt-12">
+        <a href="{{ section.settings.comparison_link }}" class="text-accent hover:text-accent-light transition-colors duration-300">
+          {{ section.settings.comparison_text }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Pricing Table",
+  "tag": "section",
+  "class": "pricing-section",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Choose Your Plan"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Select the perfect plan for your needs"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_comparison_link",
+      "label": "Show comparison link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "comparison_text",
+      "label": "Comparison link text",
+      "default": "View detailed comparison"
+    },
+    {
+      "type": "url",
+      "id": "comparison_link",
+      "label": "Comparison page link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "pricing_plan",
+      "name": "Pricing Plan",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Featured plan",
+          "default": false,
+          "info": "Highlights this plan as most popular"
+        },
+        {
+          "type": "text",
+          "id": "plan_name",
+          "label": "Plan name",
+          "default": "Standard"
+        },
+        {
+          "type": "textarea",
+          "id": "plan_description",
+          "label": "Plan description",
+          "default": "Perfect for getting started"
+        },
+        {
+          "type": "text",
+          "id": "currency_symbol",
+          "label": "Currency symbol",
+          "default": "$"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Price",
+          "default": "29"
+        },
+        {
+          "type": "text",
+          "id": "billing_period",
+          "label": "Billing period",
+          "default": "month",
+          "info": "e.g., month, year, one-time"
+        },
+        {
+          "type": "text",
+          "id": "price_note",
+          "label": "Price note",
+          "info": "Small text under price, e.g., 'Billed annually'"
+        },
+        {
+          "type": "textarea",
+          "id": "features",
+          "label": "Features",
+          "info": "Separate each feature with | symbol",
+          "default": "Feature one|Feature two|Feature three|Feature four"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text",
+          "default": "Get Started"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Pricing Table",
+      "blocks": [
+        {
+          "type": "pricing_plan",
+          "settings": {
+            "plan_name": "Starter",
+            "price": "19",
+            "features": "Up to 10 products|Basic analytics|Email support|30-day trial"
+          }
+        },
+        {
+          "type": "pricing_plan",
+          "settings": {
+            "featured": true,
+            "plan_name": "Professional",
+            "price": "49",
+            "features": "Unlimited products|Advanced analytics|Priority support|AI features|Custom domain"
+          }
+        },
+        {
+          "type": "pricing_plan",
+          "settings": {
+            "plan_name": "Enterprise",
+            "price": "99",
+            "features": "Everything in Pro|Dedicated account manager|Custom integrations|SLA guarantee|White-label options"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
